@@ -1,0 +1,98 @@
+\documentclass[a4paper]{llncs}
+
+\usepackage{scalerel}
+\usepackage{import}
+\usepackage{times}
+\usepackage{multirow}
+\usepackage{microtype}
+\usepackage{array}
+\usepackage{galois}
+\usepackage{graphicx,wrapfig}
+\usepackage[noadjust]{cite}
+\usepackage{tikz}
+\usetikzlibrary{plotmarks}
+\usepackage{pgfplotstable}
+\usepackage{filecontents}
+\usepackage{pgfplots}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{stmaryrd}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{psfrag}
+\usepackage{epsfig}
+\usepackage{wasysym} 
+%\usepackage{subfigure}
+\usepackage{paralist}
+%\usepackage{dingbat}
+\usepackage[algo2e,linesnumbered,ruled,lined]{algorithm2e}
+\usepackage{hyperref}
+\usepackage[subnum]{cases}
+\makeatother
+
+\newcommand{\extendedonly}[1]{}
+\newcommand{\paperonly}[1]{#1}
+\newtheorem{exmp}{Example}
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{lemma}[theorem]{Lemma}
+%\numberwithin{mytheorem}{subsection} 
+
+\newcommand{\tool}[1]{\textsc{#1}\xspace}
+\newcommand{\cbmcv}{\tool{cbmc 5.0}}
+\newcommand{\Omit}[1]{}
+\newcommand{\mydef}[1]{\begin{definition}#1\end{definition}}
+\newcommand{\rmcmt}[1]{{\color{magenta}{#1}}}%#1
+\newcommand{\pscmt}[1]{{\color{blue}{#1}}}%#1
+\newcommand{\dkcmt}[1]{{\color{red!70!black}{#1}}}%#1
+\newcommand{\tmcmt}[1]{{\color{orange}{#1}}}%#1
+\newcommand{\lhcmt}[1]{{\color{purple}{#1}}}%#1
+
+\newif\ifextended
+\extendedfalse        % For FM'16 publishers version
+
+\input{symbols}
+
+\begin{document}
+
+% ---------------------------------------------------------------------
+% Title, authors, abstract, keywords
+% ---------------------------------------------------------------------
+\title{Precise Abstract Interpretation Using CDCL}
+
+\author{Rajdeep Mukherjee\inst{1} \and Peter Schrammel\inst{2} \and 
+Leopold Haller\inst{3} \and \\ 
+Daniel Kroening\inst{1} \and Tom Melham\inst{1}}
+
+\authorrunning{Mukherjee, Schrammel, Haller, Kroening, Melham}
+
+\institute{University of Oxford, UK \and University of Sussex, UK \and Google Inc., USA}
+
+\maketitle
+
+%===============================================================================
+\begin{abstract}
+%===============================================================================
+%
+  This paper shows that Conflict Driven Clause Learning (CDCL) algorithm
+  employed in modern day satisfiability solvers can be used to compute 
+  fixed point approximations over lattice of program traces to determine 
+  safety.  Satisfiability or model finding can be seen as a property of fixed 
+  points of unsafe trace transformers over this lattice.  CDCL algorithm 
+  alternates between an overapproximate model search phase and an 
+  underapproximate conflict analysis phase.  We show that 
+  the model search computes a greatest fixed point over unsafe trace transformer
+  using deductions and decisions.  Whereas, conflict analysis computes a 
+  least fixed point of safe trace transformer over a downset lattice with 
+  a heuristic choice of conflict reasons.  Thus, CDCL architecture can be seen 
+  as a natural tool to build a precise program analyzer that uses decision and 
+  learning to automatically refine the precision of an analysis. This paper
+  present an end-to-end abstract interpretation perspective of Bounded Model
+  Checking using CDCL.  
+  %Our work is the first step towards lifting CDCL algorithm for design and 
+  %implementation of a precise static analyzers.
+%
+\end{abstract}
+
+\end{document}
