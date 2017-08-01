@@ -1,10 +1,62 @@
-@article{toplas07,
-  author    = {Xavier Rival and Laurent Mauborgne},
-  title     = {The trace partitioning abstract domain},
-  journal   = {{ACM} TOPLAS},
-  volume    = {29},
-  number    = {5},
+@article{DBLP:journals/iandc/BadbanPTZ07,
+  author    = {Bahareh Badban and
+               Jaco van de Pol and
+               Olga Tveretina and
+               Hans Zantema},
+  title     = {Generalizing {DPLL} and satisfiability for equalities},
+  journal   = {Inf. Comput.},
+  volume    = {205},
+  number    = {8},
+  pages     = {1188--1211},
   year      = {2007}
+}
+
+@inproceedings{DBLP:conf/cade/JovanovicM11,
+  author    = {Dejan Jovanovic and
+               Leonardo Mendon{\c{c}}a de Moura},
+  title     = {Cutting to the Chase Solving Linear Integer Arithmetic},
+  booktitle = {CADE},
+  pages     = {338--353},
+  year      = {2011}
+}
+
+@misc{smt-lib2,
+  title = {{SMT-LIB Library}},
+  howpublished =
+    "\url{http://smtlib.cs.uiowa.edu/language.shtml}",
+}
+
+
+@inproceedings{DBLP:conf/cav/McMillanKS09,
+  author    = {Kenneth L. McMillan and
+               Andreas Kuehlmann and
+               Mooly Sagiv},
+  title     = {Generalizing {DPLL} to Richer Logics},
+  booktitle = {CAV},
+  pages     = {462--476},
+  year      = {2009}
+}
+
+@article{CC92,
+  author    = {Patrick Cousot and
+               Radhia Cousot},
+  title     = {Abstract Interpretation Frameworks},
+  journal   = {J. Log. Comput.},
+  volume    = {2},
+  number    = {4},
+  pages     = {511--547},
+  year      = {1992},
+}
+
+@inproceedings{vmcai13,
+  author    = {Leonardo Mendon{\c{c}}a de Moura and
+               Dejan Jovanovic},
+  title     = {A Model-Constructing Satisfiability Calculus},
+  booktitle = {VMCAI},
+  publisher = {Springer},
+  series    = {LNCS},
+  pages     = {1--12},
+  year      = {2013}
 }
 
 @inproceedings{ssa88,
@@ -18,105 +70,6 @@
  pages = {1--11},
 } 
 
-@inproceedings{sas11,
-  author    = {David Monniaux and
-               Laure Gonnord},
-  title     = {Using Bounded Model Checking to Focus Fixpoint Iterations},
-  booktitle = {SAS}, 
-  pages     = {369--385},
-  year      = {2011}
-}
-
-@inproceedings{pldi06,
-  author    = {Sumit Gulwani and
-               Ashish Tiwari},
-  title     = {Combining abstract interpreters},
-  booktitle = {PLDI},
-  pages     = {376--386},
-  year      = {2006}
-}
-
-@inproceedings{fpt,
- author = {Cousot, Patrick and Cousot, Radhia},
- title = {Systematic Design of Program Analysis Frameworks},
- booktitle = {POPL},
- year = {1979},
- } 
-
-@inproceedings{cav2012,
-  author    = {Aditya V. Thakur and
-               Thomas W. Reps},
-  title     = {A Method for Symbolic Computation of Abstract Operations},
-  booktitle = {Computer Aided Verification - 24th International Conference, {CAV}
-               2012, Berkeley, CA, USA, July 7-13, 2012 Proceedings},
-  pages     = {174--192},
-  year      = {2012},
-}
-
-@article{adpll,
- author = {Nieuwenhuis, Robert and Oliveras, Albert and Tinelli, Cesare},
- title = {Solving SAT and SAT Modulo Theories: From an Abstract Davis--Putnam--Logemann--Loveland Procedure to DPLL(T)},
- journal = {J. ACM},
- volume = {53},
- number = {6},
- year = {2006},
- issn = {0004-5411},
- pages = {937--977},
- numpages = {41}
-} 
-
-@inproceedings{dpllt,
-  author    = {Harald Ganzinger and
-               George Hagen and
-               Robert Nieuwenhuis and
-               Albert Oliveras and
-               Cesare Tinelli},
-  title     = {{DPLL(} {T):} Fast Decision Procedures},
-  booktitle = {CAV},
-  pages     = {175--188},
-  year      = {2004},
-}
-
-
-@inproceedings{cav12,
-  author    = {Aditya V. Thakur and
-               Thomas W. Reps},
-  title     = {A Method for Symbolic Computation of Abstract Operations},
-  booktitle = {Computer Aided Verification - 24th International Conference, {CAV}
-               2012, Berkeley, CA, USA, July 7-13, 2012 Proceedings},
-  pages     = {174--192},
-  year      = {2012},
-}
-
-@inproceedings{cade07,
-  author    = {Ashish Tiwari and
-               Sumit Gulwani},
-  title     = {Logical Interpretation: Static Program Analysis Using Theorem Proving},
-  booktitle = {CADE},
-  pages     = {147--166},
-  year      = {2007}
-}
-
-@article{abd1,
-  author    = {Joke Meheus and
-               Diderik Batens},
-  title     = {A Formal Logic for Abductive Reasoning},
-  journal   = {Logic Journal of the {IGPL}},
-  volume    = {14},
-  number    = {2},
-  pages     = {221--236},
-  year      = {2006},
-}
-
-@inproceedings{Cousot04,
-  author    = {Patrick Cousot and
-               Radhia Cousot},
-	publisher = {Kluwer Academic Publishers},
-  title     = {Basic concepts of abstract interpretation},
-  pages     = {359--366},
-  year      = {2004},
-}
-
 @inproceedings{ssa1988,
  author = {Rosen, B. K. and Wegman, M. N. and Zadeck, F. K.},
  title = {Global Value Numbers and Redundant Computations},
@@ -126,6 +79,16 @@
  isbn = {0-89791-252-7},
  location = {San Diego, California, USA},
  pages = {12--27},
+} 
+
+@book{Srikant:2007,
+ author = {Srikant, Y. N. and Shankar, Priti},
+ title = {The Compiler Design Handbook: Optimizations and Machine Code Generation, Second Edition},
+ year = {2007},
+ isbn = {142004382X, 9781420043822},
+ edition = {2nd},
+ publisher = {CRC Press, Inc.},
+ address = {Boca Raton, FL, USA},
 } 
 
 @article{ssa1991,
@@ -141,13 +104,236 @@
  pages = {451--490},
 } 
 
-@inproceedings{Schmidt98,
-  author    = {David A. Schmidt},
-  title     = {Data Flow Analysis is Model Checking of Abstract Interpretations},
-  booktitle = {Proceedings of Symposium on Principles of Programming Languages,},
-  pages     = {38--48},
-  year      = {1998}
+@inproceedings{sas11,
+  author    = {David Monniaux and
+               Laure Gonnord},
+  title     = {Using Bounded Model Checking to Focus Fixpoint Iterations},
+  booktitle = {SAS}, 
+  pages     = {369--385},
+  year      = {2011}
 }
+
+@inproceedings{Cousot:1995,
+ author = {Cousot, Patrick and Cousot, Radhia},
+ title = {Formal Language, Grammar and Set-constraint-based Program Analysis by Abstract Interpretation},
+ booktitle = {FPCA},
+ year = {1995},
+ pages = {170--181}
+} 
+
+@book{flow-book,
+ author = {Muchnick, Steven S. and Jones, Neil D.},
+ title = {Program Flow Analysis: Theory and Application},
+ year = {1981},
+ isbn = {0137296819},
+ publisher = {Prentice Hall Professional Technical Reference},
+} 
+
+@inproceedings{pldi06,
+  author    = {Sumit Gulwani and
+               Ashish Tiwari},
+  title     = {Combining abstract interpreters},
+  booktitle = {PLDI},
+  pages     = {376--386},
+  year      = {2006}
+}
+
+
+@inproceedings{cade07,
+  author    = {Ashish Tiwari and
+               Sumit Gulwani},
+  title     = {Logical Interpretation: Static Program Analysis Using Theorem Proving},
+  booktitle = {CADE},
+  pages     = {147--166},
+  year      = {2007}
+}
+
+@inproceedings{dpllt,
+  author    = {Harald Ganzinger and
+               George Hagen and
+               Robert Nieuwenhuis and
+               Albert Oliveras and
+               Cesare Tinelli},
+  title     = {{DPLL(} {T):} Fast Decision Procedures},
+  booktitle = {CAV},
+  pages     = {175--188},
+  year      = {2004},
+}
+
+@article{toplas07,
+  author    = {Xavier Rival and Laurent Mauborgne},
+  title     = {The trace partitioning abstract domain},
+  journal   = {{ACM} TOPLAS},
+  volume    = {29},
+  number    = {5},
+  year      = {2007}
+}
+
+@inproceedings{DBLP:conf/fmcad/BradleyM07,
+  author    = {Aaron R. Bradley and
+               Zohar Manna},
+  title     = {Checking Safety by Inductive Generalization of Counterexamples to
+               Induction},
+  booktitle = {FMCAD},
+  pages     = {173--180},
+  year      = {2007},
+  OPTpublisher = {IEEE},
+}
+
+@article{satrajit,
+  author    = {Satrajit Chatterjee and
+               Michael Kishinevsky},
+  title     = {Automatic generation of inductive invariants from high-level microarchitectural
+               models of communication fabrics},
+  journal   = {Formal Methods in System Design},
+  volume    = {40},
+  number    = {2},
+  pages     = {147--169},
+  year      = {2012}
+}
+
+
+@inproceedings{atva2017,
+  AUTHOR    = { Mukherjee, Rajdeep
+                and Schrammel, Peter
+                and Haller, Leopold
+                and Kroening, Daniel
+                and Melham, Tom },
+  TITLE     = { Lifting CDCL to Template-based Domains for Program Verification },
+  BOOKTITLE = { ATVA },
+  YEAR      = { 2017 },
+}
+
+@inproceedings{himanshu,
+  author    = {Himanshu Jain and
+               Daniel Kroening and
+               Natasha Sharygina and
+               Edmund M. Clarke},
+  title     = {Word level predicate abstraction and refinement for verifying {RTL}
+               verilog},
+  booktitle = {DAC},
+  pages     = {445--450},
+  year      = {2005}
+}
+
+@inproceedings{wolfram,
+  author    = {A. S{\"{u}}lflow and
+               U. K{\"{u}}hne and
+               G. Fey and
+               D. Gro{\ss}e and
+               Rolf Drechsler},
+  title     = {WoLFram- {A} Word Level Framework for Formal Verification},
+  booktitle = {RSP},
+  pages     = {11--17},
+  year      = {2009}
+}
+
+@book{soc-keating,
+  title = "The Simple Art of SoC Design",
+  author = "M. Keating",
+  year = "2011",
+  publisher = "Springer",
+  isbn = "978-1-4419-8585-9"
+}
+
+@inproceedings{abc,
+  author    = {Robert K. Brayton and
+               Alan Mishchenko},
+  title     = {{ABC:} An Academic Industrial-Strength Verification Tool},
+  booktitle = {CAV},
+  pages     = {24--40},
+  year      = {2010},
+  series    = {LNCS},
+  publisher = {Springer},
+  volume    = {6174},
+}
+
+@inproceedings{vis,
+  author    = {Robert K. Brayton and
+               Gary D. Hachtel and
+               A.Vincentelli and
+               F. Somenzi and
+               A. Aziz and
+               S. Cheng and
+               S. A. Edwards and
+               S. P. Khatri and
+               Y. Kukimoto and
+               A. Pardo and
+               S. Qadeer and
+               R.K. Ranjan and
+               S. Sarwary and
+               T. R. Shiple and
+               G. Swamy and
+               T. Villa},
+  title     = {{VIS:} {A} System for Verification and Synthesis},
+  booktitle = {CAV},
+  pages     = {428--432},
+  year      = {1996}
+}
+
+@inproceedings{supratik,
+  author    = {S. Chakraborty and
+               Z. Khasidashvili and
+               C. H. Seger and
+               R. Gajavelly and
+               T. Haldankar and
+               D. Chhatani and
+               R. Mistry},
+  title     = {Word-Level Symbolic Trajectory Evaluation},
+  booktitle = {CAV},
+  pages     = {128--143},
+  year      = {2015},
+  series    = {LNCS},
+  publisher = {Springer},
+  volume    = {9207},
+
+}
+
+@article{smt1,
+  author    = {Robert Nieuwenhuis and
+               Albert Oliveras and
+               Cesare Tinelli},
+  title     = {Solving {SAT} and {SAT} Modulo Theories: From an abstract Davis--Putnam--Logemann--Loveland
+               procedure to DPLL(\emph{T})},
+  journal   = {J. {ACM}},
+  volume    = {53},
+  number    = {6},
+  pages     = {937--977},
+  year      = {2006},
+}
+
+@inproceedings{smt2,
+  author    = {Sava Krstic and
+               Amit Goel},
+  title     = {Architecting Solvers for {SAT} Modulo Theories: Nelson-Oppen with
+               {DPLL}},
+  booktitle = {Frontiers of Combining Systems, 6th International Symposium, FroCoS
+               2007, Liverpool, UK, September 10-12, 2007, Proceedings},
+  pages     = {1--27},
+  year      = {2007},
+}
+
+@inproceedings{linear-int,
+ author = {Jovanovi\'{c}, Dejan and de Moura, Leonardo},
+ title = {Cutting to the Chase Solving Linear Integer Arithmetic},
+ booktitle = {Proceedings of the 23rd International Conference on Automated Deduction},
+ series = {CADE'11},
+ year = {2011},
+ isbn = {978-3-642-22437-9},
+ pages = {338--353},
+} 
+
+@inproceedings{linear-real,
+  author    = {Kenneth L. McMillan and
+               Andreas Kuehlmann and
+               Mooly Sagiv},
+  title     = {Generalizing {DPLL} to Richer Logics},
+  booktitle = {Computer Aided Verification, 21st International Conference, {CAV}
+               2009, Grenoble, France, June 26 - July 2, 2009. Proceedings},
+  pages     = {462--476},
+  year      = {2009},
+}
+
 
 @inproceedings{ndsmt,
   author = {Cotton, Scott},
@@ -251,6 +437,19 @@ publisher= {Springer Berlin Heidelberg},
 pages= {509--523},
 }
 
+@article{adpll,
+ author = {Nieuwenhuis, Robert and Oliveras, Albert and Tinelli, Cesare},
+ title = {Solving SAT and SAT Modulo Theories: From an Abstract Davis--Putnam--Logemann--Loveland Procedure to DPLL(T)},
+ journal = {J. ACM},
+ volume = {53},
+ number = {6},
+ year = {2006},
+ issn = {0004-5411},
+ pages = {937--977},
+ numpages = {41}
+} 
+
+
 @inproceedings{dpll,
   author = {Mcmillan, Kenneth L. and Kuehlmann, Andreas and Sagiv, Mooly},
   title = {Generalizing {DPLL} to Richer Logics},
@@ -270,6 +469,35 @@ pages= {509--523},
   pages = {71--82},
   publisher = {ACM}
 } 
+
+@inproceedings{cav12,
+  author    = {Aditya V. Thakur and
+               Thomas W. Reps},
+  title     = {A Method for Symbolic Computation of Abstract Operations},
+  booktitle = {Computer Aided Verification - 24th International Conference, {CAV}
+               2012, Berkeley, CA, USA, July 7-13, 2012 Proceedings},
+  pages     = {174--192},
+  year      = {2012},
+}
+
+@inproceedings{ssa1,
+ author = {Cytron, R. and Ferrante, J. and Rosen, B. K. and Wegman, M. N. and Zadeck, F. K.},
+ title = {An Efficient Method of Computing Static Single Assignment Form},
+ booktitle = {POPL},
+ year = {1989},
+ isbn = {0-89791-294-2},
+ pages = {25--35}
+} 
+
+@inproceedings{ssa2,
+ author = {Clarke, Edmund and Kroening, Daniel and Yorav, Karen},
+ title = {Behavioral Consistency of C and Verilog Programs Using Bounded Model Checking},
+ booktitle = {DAC}, 
+ year = {2003},
+ isbn = {1-58113-688-9},
+ pages = {368--371},
+} 
+
 
 @inproceedings{tacas08,
   author    = {Sriram Sankaranarayanan and Thao Dang and Franjo Ivancic},
@@ -394,14 +622,6 @@ series    = {LNCS},
   year      = {2009}
   }
 
-@inproceedings{uip,
-  author    = {Lintao Zhang and Conor F. Madigan and Matthew W. Moskewicz and Sharad Malik},
-  title     = {Efficient Conflict Driven Learning in Boolean Satisfiability Solver},
-  booktitle = {ICCAD},
-  pages =  {279--285},
-  year = {2001}
-}
-
 
 @article{se2011,
   author    = {Julien Bertrane and
@@ -417,18 +637,6 @@ series    = {LNCS},
   number    = {1},
   pages     = {1--8},
   year      = {2011}
-}
-
-@inproceedings{atva17,
-  author    = {Rajdeep Mukherjee and
-               Peter Schrammel and
-               Leopold Haller and
-               Daniel Kroening and 
-               Tom Melham},
-  title     = {Lifting CDCL to Template Based Abstract Domains for Program
-    Verification},
-  booktitle = {ATVA 2017},
-  year      = {Submitted}
 }
 
 @inproceedings{mtk2016,
@@ -449,6 +657,13 @@ series    = {LNCS},
   year      = {2016}
 }
 
+@inproceedings{Schmidt98,
+  author    = {David A. Schmidt},
+  title     = {Data Flow Analysis is Model Checking of Abstract Interpretations},
+  booktitle = {Proceedings of Symposium on Principles of Programming Languages,},
+  pages     = {38--48},
+  year      = {1998}
+}
 
 
 @inproceedings{mskm2016,
@@ -471,6 +686,39 @@ series    = {LNCS},
   pages     = {7--12},
   year      = {2015}
 }
+
+@article{Gerlek:1995,
+ author = {Gerlek, Michael P. and Stoltz, Eric and Wolfe, Michael},
+ title = {Beyond Induction Variables: Detecting and Classifying Sequences Using a Demand-driven SSA Form},
+ journal = {ACM Trans. Program. Lang. Syst.},
+ volume = {17},
+ number = {1},
+ year = {1995},
+ pages = {85--122},
+ publisher = {ACM},
+} 
+
+@article{abd1,
+  author    = {Joke Meheus and
+               Diderik Batens},
+  title     = {A Formal Logic for Abductive Reasoning},
+  journal   = {Logic Journal of the {IGPL}},
+  volume    = {14},
+  number    = {2},
+  pages     = {221--236},
+  year      = {2006},
+}
+
+
+@article{Briggs:1998,
+ author = {Briggs, Preston and Cooper, Keith D. and Harvey, Timothy J. and Simpson, L. Taylor},
+ title = {Practical Improvements to the Construction and Destruction of Static Single Assignment Form},
+ journal = {Softw. Pract. Exper.},
+ volume = {28},
+ number = {8},
+ year = {1998},
+ pages = {859--881},
+} 
 
 @inproceedings{tacas12,
   author    = {Vijay D'Silva and
@@ -511,14 +759,6 @@ pages="356--373"
   pages = "368--371",
 }
 
-@book{soc-keating,
-  title = "The Simple Art of SoC Design",
-  author = "M. Keating",
-  year = "2011",
-  publisher = "Springer",
-  isbn = "978-1-4419-8585-9"
-}
-
 @inproceedings{CC77,
   author = {Patrick Cousot and Radhia Cousot},
   title = {Abstract Interpretation: A Unified Lattice Model for Static Analysis of Programs by Construction or Approximation of Fixpoints},
@@ -551,7 +791,25 @@ pages="356--373"
   bibsource = {dblp computer science bibliography, http://dblp.org}
 }
 
+@inproceedings{Cousot04,
+  author    = {Patrick Cousot and
+               Radhia Cousot},
+	publisher = {Kluwer Academic Publishers},
+  title     = {Basic concepts of abstract interpretation},
+  pages     = {359--366},
+  year      = {2004},
+}
 
+@article{semantic02,
+ author = {Patrick Cousot},
+ title = {Constructive design of a hierarchy of semantics of a transition system
+   by abstract interpretation},
+ journal = {Theoretical Computer Science},
+ year = {2002},
+ volume = {277},
+ number = {1},
+ pages = {47-103}
+}
 
 @book{SVA,
 	title = "A Practical Introduction to PSL",
@@ -560,6 +818,17 @@ pages="356--373"
 	publisher = "Springer",
 	isbn =  "978-0-387-36123-9"
 }
+
+@article{Cousot99,
+ author = {Cousot, Patrick and Cousot, Radhia},
+ title = {Refining Model Checking by Abstract Interpretation},
+ journal = {Automated Software Engg.},
+ volume = {6},
+ number = {1},
+ month = jan,
+ year = {1999},
+}
+
 
 @book{cdcl,
 	title = "Handbook of Satisfiability",
@@ -656,6 +925,8 @@ pages="356--373"
 
 @misc{slec,
 note={\url{http://calypto.com/en/products/slec/}}}
+
+
 
 @inproceedings{DBLP:conf/mtv/SunkariCVM07,
   author    = {Sasidhar Sunkari and
@@ -769,17 +1040,7 @@ note={\url{http://www.cprover.org/ebmc/}}}
  pages = {385--394},
  publisher = {ACM},
  address = {New York, NY, USA},
-}
-
-@article{Cousot99,
- author = {Cousot, Patrick and Cousot, Radhia},
- title = {Refining Model Checking by Abstract Interpretation},
- journal = {Automated Software Engg.},
- volume = {6},
- number = {1},
- month = jan,
- year = {1999},
-}
+} 
 
 @misc{synopsys,
 note={\url{http://www.synopsys.com/Tools/Verification/FunctionalVerification/Pages/HECTOR.aspx}}}
@@ -906,14 +1167,37 @@ note={\url{http://minisat.se/}}}
   volume    = { 5123 },
   year      = {2008}
 }
-@inproceedings{popl14,
-  author    = {Vijay D'Silva and
-               Leopold Haller and
-               Daniel Kroening},
-  title     = {Abstract satisfaction},
-  booktitle = {POPL},
-  pages     = {139--150},
-  year      = {2014},
+
+@phdthesis{zhang03,
+  author    = {L Zhang},
+  title     = {Searching the Truth: Techniques for Satisfiability of Boolean formulas},
+  school    = {Princeton University, {USA}},
+  year      = {2003}
+}
+
+@phdthesis{silva95,
+  author    = {J.P. Marques-Silva},
+  title     = {Search Algorithms for Satisfiability Problems in
+Combinational Switching Circuits},
+  school    = {University of Michigan, {USA}},
+  year      = {1995}
+}
+
+@inproceedings{SilvaS94,
+  author    = {Jo{\~{a}}o P. Marques Silva and
+               Karem A. Sakallah},
+  title     = {Dynamic Search-Space Pruning Techniques in Path Sensitization},
+  booktitle = {{DAC}},
+  pages     = {705--711},
+  year      = {1994}
+}
+
+@inproceedings{uip,
+  author    = {Lintao Zhang and Conor F. Madigan and Matthew W. Moskewicz and Sharad Malik},
+  title     = {Efficient Conflict Driven Learning in Boolean Satisfiability Solver},
+  booktitle = {ICCAD},
+  pages =  {279--285},
+  year = {2001}
 }
 
 @article{DBLP:journals/fmsd/BrainDGHK14,
@@ -930,6 +1214,45 @@ note={\url{http://minisat.se/}}}
   pages     = {213--245},
   year      = {2014},
 }
+
+@inproceedings{mcsat1,
+  author    = {Leonardo Mendon{\c{c}}a de Moura and
+               Dejan Jovanovic},
+  title     = {A Model-Constructing Satisfiability Calculus},
+  booktitle = {Verification, Model Checking, and Abstract Interpretation, 14th International
+               Conference, {VMCAI} 2013, Rome, Italy, January 20-22, 2013. Proceedings},
+  pages     = {1--12},
+  year      = {2013},
+}
+
+@INPROCEEDINGS{mcsat2,
+author={D. Jovanovic and C. Barrett and L. de Moura},
+booktitle= {Formal Methods in Computer-Aided Design (FMCAD)},
+title={The design and implementation of the model constructing satisfiability calculus},
+pages={173-180},
+year={2013}
+}
+
+@article{nonlinear,
+  author    = {Dejan Jovanovic and
+               Leonardo de Moura},
+  title     = {Solving non-linear arithmetic},
+  journal   = {{ACM} Comm. Computer Algebra},
+  volume    = {46},
+  number    = {3/4},
+  pages     = {104--105},
+  year      = {2012}
+}
+
+@inproceedings{popl2014,
+ author = {D'Silva, Vijay and Haller, Leopold and Kroening, Daniel},
+ title = {Abstract Satisfaction},
+ booktitle = {Proceedings of the 41st ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+ series = {POPL},
+ year = {2014},
+ isbn = {978-1-4503-2544-8},
+ pages = {139--150},
+} 
 
 @inproceedings{dhk2013-popl,
   AUTHOR    = { D'Silva, Vijay
