@@ -159,16 +159,17 @@ irreducibles representable by the underlying abstract domains.
 
 
 Another key difference between ACDLP and the solver procedures discussed above is that 
-ACDLP directly operates over SSA representation of a program whereas a DPLL(T) based solver 
-operates on a formula which is a conjunction of sentences in a given logic where a sentence 
-(or clause) is a disjunction of theory atoms. This formula is usually specified in 
-SMT-LIB2~\cite{smt-lib2} language.  For example, a sentence in the logic formula of 
+ACDLP directly operates over Static Single Assignment representation of a program 
+whereas a DPLL(T) based solver operates on a formula which is a conjunction of 
+sentences in a given logic where a sentence (or clause) is a disjunction of 
+theory atoms. This formula is usually specified in SMT-LIB2~\cite{smt-lib2} 
+language.  For example, a sentence in the logic formula of 
 quatifier-free linear rational arithmetic (QFLRA) is of the form 
 $c_1x_1 + c_2x_2 + \ldots + c_nx_n \diamond c_0$, where $c_i$ is a rational constant 
 and $x_i$ is a rational variable, and $\diamond$ is either $\geq$ or $>$.  A model of 
 QFLRA is an assignment of rational values to variables $x_i$ such that it satisfies 
 every clause of the formula.  \rmcmt{In contrast, an SSA may not be exactly represented 
-in a clausal form.  Recall from section~\cite{ssa-cite}, elements of SSA are obtained directly 
+in a clausal form.  In section~\ref{ssa-cite}, we show that elements of SSA are obtained directly 
 from program statements through syntactic translation steps.  Hence, a clause in SSA 
 representation constitute an equality or inequality (obtained from assignment statements 
 or an assertion) or disjunctions (obtained from control-flow branches).} 

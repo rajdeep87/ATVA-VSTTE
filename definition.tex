@@ -1,0 +1,370 @@
+\section{SAT Solver}
+\rmcmt{Different state of a clause}
+
+\begin{definition}
+We denote $\lambda X. Exp$ as a function that maps a free variable $X$ to the 
+value of the expression $Exp$.
+\end{definition}
+%
+\begin{definition} (Poset)
+
+\end{definition}
+%
+\begin{figure}[htbp]
+\centering
+\scalebox{.55}{\import{figures/}{interval_env.pspdftex}}
+\caption{Interval domain over two variables \label{fig:interval}}
+\end{figure}
+%
+\begin{definition} (Lattice)
+Define Complete lattice
+\end{definition}
+In this paper, we denote a lattice by $(L, \sqsubseteq)$ or $(L, \sqsubseteq,
+\sqcup, \sqcap)$.
+%
+\rmcmt{IMPORTANT give example of Interval $Itv$ lattice, used later for example in galois
+connection}
+%
+\begin{definition} (Bounded Lattice)
+A lattice $(L, \sqsubseteq)$ is called \emph{bounded} if it contains a greatest 
+element called \emph{top}, denoted by $\top$, and a least element called 
+\emph{bottom}, denoted by $\bot$.
+\end{definition}
+%
+\begin{definition} (Additive function)
+A function $f$ on a complete lattice $(L, \sqsubseteq)$ is called \emph{additive} 
+if $f(a \sqcup b) = f(a) \sqcup f(b)$. Function $f$ is called \emph{completely additive} 
+if $f(\bigsqcup X) = \bigsqcup f(X)$.  The dual notions are called \emph{multiplicative} 
+and \emph{completely multiplicative}.
+\end{definition}
+%
+\begin{definition} (Idempotent function)
+A function $f$ on a complete lattice $(L, \sqsubseteq)$ is called \emph{Idempotent} 
+if $f(f(a)) = f(a)$ for all $a$. 
+\end{definition}
+%
+\begin{definition} (Reductive and Extensive function)
+A function $f$ on a complete lattice $(L, \sqsubseteq)$ is called \emph{reductive} 
+if $f(a) \sqsubseteq a$ for all $a$. Function $f$ is called \emph{extensive} if 
+$f(a) \sqsupseteq a$ for all $a$.
+\end{definition}
+%
+\begin{definition} (Galois connection)
+  Let $(C, \subseteq)$ be a \emph{concrete lattice} and $(A, \sqsubseteq)$ 
+  be an \emph{abstract lattice}. We define a pair of functions $(\alpha,\gamma)$ 
+  such that the \emph{abstraction function} $\alpha \colon C \rightarrow A$, maps
+  concrete elements to their best abstract representation, and a \emph{concretization 
+  function}, $\gamma \colon A \rightarrow C$, maps an abstract element to a set
+  of elements in the concrete that are approximated through the corresponding
+  abstraction. Given an identify function $id_X$ on lattice $X$, the pair 
+  $(\alpha,\gamma)$ is a \emph{galois connection} if the following property holds. 
+  \[
+     \alpha \circ \gamma \sqsubseteq id_A \quad \text{and} \quad 
+     \gamma \circ \alpha \supseteq id_C
+  \]
+  Intuitively, this means that $(\alpha,\gamma)$ is a galois connection if 
+  $\underset{\{a \in A,c \in C\}}{\forall} \alpha(c) \sqsubseteq a$ exactly if $\gamma(a)
+  \supseteq c$.
+\end{definition}
+%
+\begin{example}
+  An example of galois connection between a powerset of integers
+  $(\powerset(\mathbb{Z}), \subseteq)$ and interval lattice $(Itv,\sqsubseteq)$ is given
+  by,
+\[
+  (\powerset(\mathbb{Z}),\subseteq)
+    \galois{\alpha}{\gamma}
+  (Itv,\sqsubseteq)
+\]
+\[
+  \alpha(\emptyset) \mathrel{\hat=} \bot \quad \alpha(z) \mathrel{\hat=}
+  [min(z), max(z)]
+\]
+\[
+  \gamma(\bot) \mathrel{\hat=} \emptyset \quad \gamma([a,b]) \mathrel{\hat=} \{z
+  \in \mathbb{Z} \mid a \leq z \leq b\}
+\]
+\end{example}
+%
+\begin{definition} (Galois insertion)
+  Let $(C, \subseteq)$ be a \emph{concrete lattice} and $(A, \sqsubseteq)$ 
+  be an \emph{abstract lattice}. A pair of function $(\alpha,\gamma)$ 
+  is a \emph{galois insertion} if $\alpha \circ \gamma = id_A$
+\end{definition}  
+%
+\begin{definition} (Properties of Galois connection)
+A galois connection between a concrete lattice $(C, \subseteq)$ and an abstract 
+lattice $(A, \sqsubseteq)$, 
+  $(C,\subseteq) \galois{\alpha}{\gamma} (A,\sqsubseteq)$ has the property that
+  the abstraction function $\alpha$ is \rmcmt{additive}, the concretization function
+  $\gamma$ is \rmcmt{multiplicative} and the galois connection can be
+  sequentially composed to generate a series of approximations as shown below, 
+  \[
+    (A,\subseteq)
+    \galois{\alpha_a}{\gamma_a}
+    (B,\sqsubseteq)
+    \galois{\alpha_b}{\gamma_b}
+    (C,\preccurlyeq) 
+    \implies 
+    (A,\subseteq)
+    \galois{\alpha_a \circ \alpha_b}{\gamma_a \circ \gamma_b}
+    (C,\sqsubseteq)
+  \]
+\end{definition}  
+%
+\begin{definition} (Concrete Domain and Abstract Domain)
+
+\end{definition}
+%
+\begin{definition} (Disjunctive Abstract Domain)
+Let $(A, \sqsubseteq, \sqcup, \sqcap)$ be an abstraction of the concrete domain
+$(C, \subseteq, \cup, \cap)$ w.r.t. a galois connection $(\alpha, \gamma)$. The 
+abstract lattice $A$ is disjunctive if $\gamma(a \sqcup b) = \gamma(a) \cup \gamma(b)$. 
+\end{definition}
+%
+\begin{definition} (Exact and Approximate Abstraction)
+Let concrete semantics $C$ be approximated by an abstract semantics $A$ via an 
+abstraction function $\alpha\colon C \mapsto A$ such that $\alpha(C) \sqsubseteq A$. 
+Then, the abstraction is \emph{exact} if $\alpha(C)=A$ and \emph{approximate} 
+if $\alpha(C)\sqsubset A$.
+\end{definition}
+%
+\begin{definition} (Upwards Closed Set)
+  An upward closed set of a partially ordered set $(P, \subseteq)$ is a subset
+  $Q$ such that if $a \in Q$ and $a \subseteq b$, then this implies that $b \in
+  Q$. 
+\end{definition}
+%
+\begin{definition} (Downwards Closed Set)
+  A downward closed set of a partially ordered set $(P, \subseteq)$ is a subset
+  $Q$ such that if $a \in Q$ and $b \subseteq a$, then this implies that $b \in
+  Q$. 
+\end{definition}
+%
+\begin{definition} (Complement Operation in Lattice)
+
+\end{definition}
+%
+%  
+\begin{definition} (Downset Completion)
+For a concrete domain $(C, \subseteq, \cup, \cap)$, let $(A, \sqsubseteq, \sqcup, \sqcap)$ 
+be an abstraction of the concrete domain w.r.t. a galois connection $(\alpha, \gamma)$.
+A \emph{downset completion} of a lattice $A$ is a complete lattice $\mathcal{D}(A)$ 
+that is equipped with disjunction and is an under-approximation of the concrete
+domain defined through the following abstraction and concretisation function. 
+  \[
+    \alpha_{\mathcal{D}(A)}(P) \mathrel{\hat=} \{a \mid \gamma(a) \subseteq P\}
+     \quad
+     \gamma_{\mathcal{D}(A)}(Q) \mathrel{\hat=} \bigcup \{\gamma(a) \mid a \in Q\}
+  \]
+\end{definition}
+%
+\begin{definition} (Fixedpoint)
+  Let $(A, \leq)$ be a poset. Then, an element $a \in A$ is a fixed point of 
+  a function $F$ if $F(a)=a$. A  pre-fixed points of $F$ is defined as those
+  elements $a \in A$ such that $f(a) \leq a$.  A post-fixed point of $F$ is
+  defined as those elements $a \in A$ such that $a \leq f(a)$. A fixed point is
+  both a pre-fixed point and a post-fixed point. 
+  A least fixed point of $F$, denoted by $lfp\; F$ is the least among fixed 
+  points of $F$. 
+  A greatest fixed point, denoted by $gfp\; F$ is the greatest among fixed
+  points of $F$.  A least pre-fixed point of $F$ is the least among pre-fixed
+  points of $F$. A greatest post-fixed point of $F$ is the greatest among 
+  post-fixed points of $F$.  The $lfp$, $gfp$, pre-fixed points and
+  post-fixed points are unique whenever they exist.  
+\end{definition}
+%
+
+\section{Abstract Interpretation}
+Over-approximate and under-approximate transformer. 
+
+\begin{example}
+An interval domain is non-distributive. Consider the following scenario.
+\[
+   ([0,2] \sqcup [8,9]) \sqcap [5,6] = [5,6] \neq
+   ([0,2] \sqcap [5,6]) \sqcup ([8,9] \sqcap [5,6]) = \bot
+\]
+\end{example}
+
+\begin{definition}
+A downward extrapolation on a lattice $L$ is a function $ext \downharpoonright
+  \colon L \rightarrow L$ such that $ext \downharpoonright(a) \sqsubseteq a$ for
+  all $a \in L$. 
+\end{definition}
+
+\begin{definition}
+An upward interpolation on a lattice $L$ is a function $int \upharpoonright
+  \colon L \rightarrow L$ such that $a \sqsubseteq b \implies a \sqsubseteq 
+  int \upharpoonright(a,b) \sqsubseteq b$ for all $a,b \in L$. 
+\end{definition}
+%
+\begin{definition} (Pointwise lifting)
+  Let $(A, \sqsubseteq, \sqcap, \sqcup)$ be a poset.  A pointwise lifting is 
+  an operation that lifts the pointwise order $\sqsubseteq$ to the functions 
+  on $A$. Consider the functions $f,g \colon T \rightarrow A$, where $T$ is a set. 
+  The pointwise
+  order $\sqsubseteq$ lifted to $f,g$ is a partial order, denoted by, 
+  $f \sqsubseteq^\circ g$, holds, if $f(a) \sqsubseteq g(a)$ for all a.
+  Similarly, the pointwise meet and pointwise join on $A$ holds if 
+  $f(a) \sqcap g(a)$ and $f(a) \sqcup g(a)$, respectively, for all a. 
+\end{definition}
+%
+
+%%%%%%%%%%%%%%%% PROGRAM BASICS %%%%%%%%%%%%%
+%
+%\rmcmt{Example of CFG Page 26 Leo-thesis} \\
+For a program $P$, we denote by $Var$ the finite set of program variables 
+and $Val$ as the set of values that the variables can take. 
+%
+\begin{definition} (Control-flow Graph). A control-flow graph (CFG) is a directed
+  graph with 5 tuples $(V, E, \mathcal{S}, \mathcal{T}, I)$, where
+$V$ is a set of nodes or control locations, $E \subseteq V \times V$
+is a set of control-flow edges, $S$ is a set of actions modelling \emph{program 
+  statements}, $\mathcal{T} \colon E \rightarrow \mathcal{S}$ is a set of labelled
+transitions which encodes the control-flow, $I \in V$ is the initial
+location.
+\end{definition}
+%
+\begin{definition} (Memory state). A memory state, $\Omega
+  \mathrel{\hat=} Var \mapsto Val$ is a mapping of program 
+  variables $Var$ to its corresponding value $Val$. 
+\end{definition}
+%
+\begin{definition} (Program State). A program state, $\sigma \mathrel{\hat=} V \times
+  \Omega$, is a tuple consisting of control location and memory state.
+\end{definition}
+%
+\begin{definition} (Path). A path through a CFG is a finite, non-empty sequence
+  of control-locations $v_1 \ldots v_n$ such that $\underset{1 \leq i \leq n}{\forall i} 
+  (v_i, v_{i+1}) \in E$. 
+\end{definition}
+%
+\begin{definition} (Concrete Environment)
+A \emph{concrete environment} can be regarded as memory state that contains values 
+for each variable in the program. 
+\end{definition}
+%
+\begin{definition} (Concrete Semantic domain)
+Let $Env$ be the set of all possible concrete environments.  
+A concrete domain is defined by a complete lattice,
+  $(\powerset(Env),\subseteq,\cup,\cap)$. 
+\end{definition}
+%
+Each statement $s \in \mathcal{S}$ modifies the state of a CFG. Hence, execution
+of a program statement $s$ corresponds to a state transition in a transition
+relation, $\mathcal{ST}_{s} \subseteq \Omega \times \Omega$.  
+%
+\begin{example}
+  Consider a program \texttt{x:=10; while(x>0) x:=x-1;}.  The transition
+  relation over set of integers $\mathbb{Z}$ is given by 
+  $\{\langle x, x' \rangle \mid x>0 \wedge x'=x-1\}$, where the initial state is
+  $\{10\}$.
+\end{example}
+%
+The operational semantics of a CFG can be defined using a \emph{state 
+transition system}.  
+%
+\begin{definition} (State Transition System). A state transition system of a 
+  Control Flow Graph $G = (V, E, \mathcal{S}, \mathcal{T}, I)$ is a 3 tuple 
+  $M = (\Sigma, \mathcal{R}, \mathcal{I})$, where 
+  $\Sigma$ is a set of program states $\Sigma = (V \times \Omega)$,
+  $\mathcal{I} \subseteq \Sigma$ 
+  is a set of initial states $\mathcal{I} = \{(I, \omega) \mid \omega \in
+  \Omega\}$ and $\mathcal{R} \subseteq \Sigma \times \Sigma$ 
+  is a transition relation defined as 
+  $((v_1, \omega_1),(v_1, \omega_2)) \in \mathcal{R}$ where $(v_1,v_2) \in E$
+  and $(\omega_1, \omega_2) \in \mathcal{ST}_{\mathcal{T}(v_1,v_2)}$
+\end{definition}
+%
+%\section{Program Trace, Transformers and Safety}
+%
+\begin{definition} (Trace). A trace $\pi$ of state transition system
+  $(\Sigma, \mathcal{R}, \mathcal{I})$ of a CFG $G$ is a finite sequence of states
+  $\sigma_1 \ldots \sigma_n$ such that $\underset{1 \leq i \leq n}{\forall i}
+  \sigma_i \in \Sigma$.  We denote a set of traces by $\Pi$.  A trace $\pi=(v_1,\omega_1)
+  \ldots (v_k,\omega_k) \in \Pi$ is \emph{well formed} if $(v_1,\omega_1) \in 
+  \mathcal{I}$ and $\pi$ follows the transition relation $\mathcal{R}$, that is
+  $(v_1,\omega_1) \rightarrow (v_2,\omega_2) \rightarrow \ldots \rightarrow 
+  (v_k,\omega_k)$.  We denote a set of well-formed traces by $\Pi_{wf}$.
+\end{definition}
+%
+\begin{definition} (Monotonic function). A function $f$ defined on a set $S$ is
+  \emph{monotonic} iff it is either entirely non-increasing or entirely non-decreasing.  
+  $f$ is called \emph{monotonically increasing} if for all $x$, $y$ such that $x \leq
+  y$, $f(x) \leq f(y)$. 
+  $f$ is called \emph{monotonically decreasing} if for all $x$, $y$ such that $x \leq
+  y$, $f(x) \geq f(y)$. 
+\end{definition}
+%
+\begin{definition} (Transformer). A transformer $f$ on a poset $(P, \sqsubseteq)$ 
+is either monotonically increasing or monotonically decreasing function $f\colon
+	P \rightarrow P$, that is $f$ is order preserving. 
+\end{definition}
+%
+\begin{definition} (Upper closure and Lower Closure Transformer). A transformer $f$ on a 
+poset $(P, \sqsubseteq)$ is \emph{upper-closure} if it is idempotent and extensive. A 
+transformer $f$ is \emph{lower-closure} if it is idempotent and reductive.
+\end{definition}
+%
+\begin{definition} (Approximating Transformer). 
+  Let $(P, \subseteq)$ and $(Q, \sqsubseteq)$ be two posets such that 
+  $(P,\subseteq) \galois{\alpha}{\gamma} (Q,\sqsubseteq)$ with transformers 
+  $f\colon P \rightarrow P$ and $g \colon Q \rightarrow Q$.  We say transformer 
+  $g$ \emph{soundly approximates} transformer $f$ if one of the following condition holds. 
+  \begin{enumerate}
+    \item Let Q overapproximates P through $(\alpha, \gamma)$, then $g$ \emph{soundly
+      overapproximates} $f$ if $\forall q \in Q, f \circ \gamma(q) \subseteq
+      \gamma \circ g(q)$. 
+    \item Let Q underapproximates P through $(\alpha, \gamma)$, then $g$ \emph{soundly
+      underapproximates} $f$ if $\forall q \in Q, f \circ \gamma(q) \supseteq
+      \gamma \circ g(q)$. 
+  \end{enumerate}
+\end{definition}
+%  
+\begin{definition} (Best Abstract Transformer).
+  Let $(P, \subseteq)$ and $(Q, \sqsubseteq)$ be two posets such that 
+  $(P,\subseteq) \galois{\alpha}{\gamma} (Q,\sqsubseteq)$ with transformers 
+  $f\colon P \rightarrow P$ and $g \colon Q \rightarrow Q$.  The best abstract
+  transformer of $f$ is $\alpha \circ f \circ \gamma$. 
+\end{definition}  
+%
+\begin{definition}~\label{meetirrd} (Meet Irreducible)
+A \emph{meet irreducible} $m$ in a complete lattice 
+structure $L$ is an element with the following property.
+\begin{equation}
+\forall m_1, m_2 \in L: m_1 \meet m_2 = m \implies (m = m_1 \lor m = m_2), m \neq \top  
+\end{equation}
+\end{definition}
+%
+\begin{definition} (Downset)
+  A downward closed set or \emph{downset} of a partially ordered set $(P, \subseteq)$ is a subset
+  $Q$ such that if $a \in Q$ and $b \subseteq a$, then this implies that $b \in
+  Q$. 
+\end{definition}
+%
+\begin{definition} (Downset Abstraction)
+
+\end{definition}
+%
+\begin{definition}~\label{complement} (Precise Complement) 
+An element $\absval$ in a complete lattice $L$ is called 
+\emph{precisely complementable} iff there exists 
+$\bar{\absval} \in L$ such that $\neg\gamma(\bar{\absval})=\gamma(\absval)$.
+That is, there is an element whose negated concretisation equals
+the concretisation of $\absval$. 
+\Omit{
+If every meet irreducible in 
+$\widehat{\mathcal{SA}_{G}}$ is complementable, then 
+$\widehat{\mathcal{SA}_{G}}$ is said to have complementable 
+meet irreducibles.}
+\end{definition}
+%
+\begin{definition}~\label{fixedpoint} (Knaster-Tarski Theorem) 
+Let $L$ be a complete lattice and $f\colon L \rightarrow L$ be an
+order-preserving function.  Then the set of fixed points in $L$ also forms a 
+complete lattice, where the least fixed point (lfp) and greatest fixed point
+(gfp) are given by $lfp\; f = \bigsqcap \{a \in L \mid f(a) \sqsubseteq a\},  
+gfp\; f = \bigsqcup \{a \in L \mid f(a) \sqsupseteq a\}$. 
+\end{definition}
+%
+  

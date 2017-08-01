@@ -1,0 +1,41 @@
+\begin{picture}(0,0)%
+\includegraphics{interval_env_pspdftex}%
+\end{picture}%
+\setlength{\unitlength}{4144sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(9072,4114)(-149,-5759)
+\put(4186,-5686){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(Itv, \sqsubseteq, \sqcap, \sqcup)$}%
+}}}}
+\put(181,-4741){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[-10,-10],y:[-10,-10] \rangle$}%
+}}}}
+\put(6931,-4741){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[100,100], y:[100,100] \rangle$}%
+}}}}
+\put(2746,-4741){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[-1,-1],y:[-1,-1] \rangle$}%
+}}}}
+\put(4906,-4741){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[10,10],y:[10,10] \rangle$}%
+}}}}
+\put(6436,-3886){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[10,100],y:[10,100] \rangle$}%
+}}}}
+\put(-134,-2806){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[-1,\infty],y:[-\infty,-1] \rangle$}%
+}}}}
+\put(2296,-2806){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[-10,\infty],y:[-\infty,-10] \rangle$}%
+}}}}
+\put(766,-3886){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[-10,-1],y:[-10,-1] \rangle$}%
+}}}}
+\put(3421,-3886){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[-1,10],y:[-1,10] \rangle$}%
+}}}}
+\put(4411,-5326){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\bot$}%
+}}}}
+\put(4681,-2806){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[-\infty,10],y:[10,\infty] \rangle$}%
+}}}}
+\put(4636,-1816){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\top$}%
+}}}}
+\put(6841,-2806){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\langle x:[-\infty,100],y:[100,\infty] \rangle$}%
+}}}}
+\end{picture}%

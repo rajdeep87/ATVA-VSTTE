@@ -75,7 +75,7 @@ $\Sigma_M^*\mathrel{\hat=} \bigcup_{n\geq0}\Sigma_M^{n}$.
 \para{Reachability Semantics}
 %
 %Whereas, Min\'{e}~\cite{minepaper} starts from 
-A \emph{reachability} semantics~\cite{minepaper} of a state transition 
+A \emph{reachability} semantics~\cite{minethesis} of a state transition 
 system $M=(\Sigma, \mathcal{R},\mathcal{I})$ is the set of states that are 
 reachable from the initial states $\mathcal{I}$. A reachability
 semantics is a complete lattice of powerset of
@@ -209,7 +209,7 @@ Figure~\ref{fig:semantic} shows the sequence of syntactic translation steps
 and semantic approximations of concrete set of traces, $\powerset(\Pi)$.  
 A program is represented by a Control-flow Graph $G=(V,E,S,\mathcal{T},I,E)$.  
 Classical abstract interpretation interprets a CFG as equation 
-system~\cite{minepaper,Schmidt98,tacas12}, which is described next.  The box in 
+system~\cite{minethesis,Schmidt98,tacas12}, which is described next.  The box in 
 \emph{red} shows the corresponding lattices that an abstract interpreter
 operates on.  The ACDLP procedure presented in this paper operates on a
 different lattice which is obtained by syntactic translation step
@@ -229,7 +229,7 @@ these structures and various transformers to operate on these lattices.
 %
 \rmcmt{\para{Program Transformation $\mathcal{T}_1$}}
 %
-\subsection{CFG to Equation Systems}
+\subsection{CFG to Constraint System}~\label{ssa-cite}
 %
 Recall that an operational semantics of a CFG can be defined using a 
 state transition system. An equation 
@@ -239,7 +239,7 @@ powerset of environments, $\powerset(Var \mapsto Value)$.  These equations perfo
 point-wise lifting of $\powerset(Var \mapsto Value)$ to $V$.   The variables $S_v$
 are related through the transformers associated with program statements that express the 
 data-flow equations between individual control-flow nodes in the CFG.  Haller
-et. al. call this equation system~\cite{minepaper} 
+et. al. call this equation system~\cite{minethesis} 
 \emph{static analysis equation}~\cite{tacas12}.  Solution to these equations 
 yields the data-flow information of $G$.  The resulting lattice that describes 
 these static analysis equations is given by $(\mathcal{F}_G, \sqsubseteq)$.   
