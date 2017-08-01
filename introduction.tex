@@ -1,0 +1,110 @@
+\section{Introduction}
+
+\para{Conflict Driven Clause Learning Solvers} 
+%
+A Conflict Driven Clause Learning algorithm~\cite{cdcl} is a boolean satisfiability
+procedure that alternates between a model search phase and conflict analysis
+phase to solve a propositional formula given in conjunctive normal form (CNF).  
+The model search phase uses \emph{decisions} and \emph{Boolean Constraint
+Propagation} (BCP) to search for a satisfying assignment of the formula.  A 
+decision uses branching to assign the chosen value to a chosen branching variable.  
+Decision is followed by BCP step. BCP uses repeated application of unit rule where 
+an unit rule identifies variables which must be assigned specific Boolean value. 
+If BCP identifies an unsatisfied clause, the CDCL algorithm is said to be in 
+\emph{conflict} and the algorithm \emph{backtracks} non-chronologically. A
+backjumping procedure undoes all branching steps until the decision level 
+where the solver state is consistent (non-conflicting).  This is a key 
+difference with a DPLL solver which just backtracks to the previous 
+decison level and flips it. The backjumping level in CDCL is determined 
+by analyzing the most recent conflict and learning a new clause from the 
+conflict.  If the backtracking level is the root of the search tree, then 
+the solver terminates with no models, that is, the formula is \emph{unsatisfiable}.  
+Else, the model search phase is repeated with the learnt clause and the procedure 
+continues until all variables has been assigned in which case, the 
+algorithm returns a satisfiable assignment, that is, the formula is \emph{satisfiable}. 
+%
+
+\para{Connection between CDCL and Program Analysis}
+%
+Thus, CDCL solvers can be understood as a procedure to compute approximations of fixed 
+points over a lattice of partial assignments~\cite{sas12}.  A key insight 
+that connects CDCL to program analysis is that they use an imprecise 
+over-approximate domain of partial assignments to gain efficiency and 
+techniques like decision and clause learning to improve precision.  
+%
+Silva et. al. in~\cite{popl2014} propose an understanding of CDCL in the language
+of lattices and transformers suggesting a ``\emph{Grand Unification}" of SAT
+and static analysis.
+%
+In this paper, we take one step towards this unification goal by characterizing CDCL
+as a procedure for computing fixed point approximations over a lattice
+of program traces to determine program safety.  
+%learning based program analyzers.  
+A practical benefit of this characterization is that the CDCL architecture can
+be used to build a precise learning based static analyzers that operates over 
+arbitrary non-distributive abstract domains~\cite{atva2017}. \rmcmt{update
+reference} \\
+%
+
+
+CDCL can be understood as a general algorithmic framework, parameterized 
+by a concrete domain $C$ and an abstract domain $A$, where $C$ is the 
+set of propositional truth assignment and $A$ the domain of partial assignments.  
+A characterization 
+of CDCL as a program analyzer requires the concrete domain to 
+be instantiated over a lattice of program traces that may lead to an error.  
+Given a \emph{safe trace transformer} which returns a set of safe or 
+invalid traces and an \emph{unsafe trace transformer} which returns a set 
+of unsafe traces, satisfiability can then be seen as a property of fixed points of
+unsafe trace transformer over this lattice.  A model search
+overapproximates the unsafe trace transformer and conflict analysis
+underapproximates the safe trace transformer.  Decisions refines a downward
+iteration sequence and learning overapproximates set 
+of unsafe traces.  This paper presents a theoretical recipe and a mathematical
+basis for instantiating CDCL architecture for program analysis using the
+framework of abstract interpretation.  
+%to formalize an abstract interpretation account of Bounded Model Checking using CDCL
+%architecture.  
+In this paper, we restrict our formalizations to programs 
+with bounded loops and finite recursion depth.
+We expect that the characterizations presented in this paper would contribute 
+to the development of precise and efficient static analyzers that can 
+automatically recover from imprecision without employing expensive 
+abstract domains such as trace partitioning~\cite{toplas07}.  
+One such practical instantiation of CDCL as learning based program
+analyzer~\cite{atva2017} \rmcmt{update reference} over a template based abstract domains is 
+demonstrated in this paper. 
+%
+\para{Structure of the paper}
+%
+In this paper, we first briefly explain the work of Silva et. al.~\cite{sas12,
+popl2014} that gives an abstract interpretation account of CDCL algorithm. 
+We then present a novel abstract interpretation account of bounded model
+checking using CDCL algorithm.  To this end, we first show that conventional
+trace based abstractions are not ideal for lifting CDCL to program analysis due
+to lack of precise complementation property. So,
+we introduce an abstraction of program traces over a logical encoding of program 
+using Static Single Assignment (SSA) form.  We then present a novel safety
+verification algorithm called \emph{Abstract Conflict Driven Learning for Programs (ACDLP)} 
+that uses decision and learning techniques to precisely reason over a lattice of
+SSA elements.  We conclude that a practical benefit of abstract interpretation 
+account of BMC using CDCL algorithm gives a new, learning based architecture for 
+implementing precise program analysis tools.   
+%
+\para{Contributions}
+In this paper, we make the following contributions.
+%
+\begin{enumerate}
+  \item We characterize satisfiability as a property of fixed points of
+  unsafe trace transformer over the lattice of program traces.
+  \item We present an abstraction of trace semantics that is suitable for
+  lifting CDCL architecture to program analysis. 
+  \item We characterize model search as a technique to compute a greatest
+    fixed point of an unsafe trace transformer using deductions and decisions.
+  \item A conflict analysis is characterized as a technique to compute
+    a least fixed point of safe trace transformer over a downset lattice 
+    with heuristic choice of conflict reasons.  We show that learning is 
+    a reduction over unsafe trace transformers, parameterized by an element of downset lattice.  
+\end{enumerate}
+%
+

@@ -1,0 +1,695 @@
+\section{Abstract Conflict Driven Learning for Programs}~\label{acdlp}
+%
+Figure~\ref{acdlp-top} present our framework called \emph{Abstract Conflict 
+Driven Learning for Programs} that uses abstract model search and abstract 
+conflict analysis procedures for safety verification of programs.  The model
+search procedure operates on an over-approximate domain of program
+traces through application of various deduction transformers (strongest
+post-condition or weakest pre-condition transformers) (see
+section~\ref{model-search}) 
+and decisions (see section~\ref{decision}) in order to search for a counterexample trace.  
+If the model search finds a satisfying assignment
+(corresponding deduction transformer is $\gamma$-complete) 
+(see section~\ref{gamma-complete}), then ACDLP 
+terminates with a counterexample trace, and the program is \emph{unsafe}.  
+Else, if a conflict is encountered, then it implies that the corresponding 
+program trace is either not valid or safe.  ACDLP then moves to the conflict 
+analysis phase (see section~\ref{conflict-analysis}) where it learns the 
+reason for the conflict from partial safety proof followed by a heuristic 
+choice of conflict reason.  Similar to SAT solver, ACDLP picks one conflict 
+reason from multiple
+incomparable reasons for conflict for efficiency reasons. Hence, it operates over 
+a downset domain of conflict reasons.  A conflict reason
+underapproximates a set of invalid or safe traces. The conflict analysis returns a 
+learnt transformer (negation of conflict reason) that over-approximate a set of 
+valid and unsafe traces (see section~\ref{learning}). Model search is repeated with 
+this new transformer.  Else, if no further backtracking is possible, then ACDLP 
+terminates and returns \emph{safe}.  We present an abstract interpretation
+account of counterexample search procedure using ACDLP in subsequent sections.
+%
+\rmcmt{give a top level algorithmic view of ACDLP}
+%===============================================================================
+%\section{Abstract CDCL account of Program Safety}
+%===============================================================================
+%
+\begin{figure}
+\centering
+\scalebox{.70}{\import{figures/}{acdlp-top.pspdftex}}
+\caption{ACDLP: Abstract Conflict Driven Learning for Programs \label{acdlp-top}}
+\end{figure}
+%
+%===============================================================================
+\section{Model Search in Programs}~\label{model-search}
+%===============================================================================
+A model search in CDCL solver alternates between two phases -- \emph{decisions} 
+and \emph{boolean constraint propagation}, until a satisfying assignment is
+obtained or a conflict is encountered. ~\cite{sas12} shows that BCP computes a
+greatest fixed point by applying a unit rule which is the best abstract
+transformer over a partial assignments domain.  Here, we characterise model
+search as a procedure that computes fixed point approximations of unsafe trace 
+transformer.  
+%-------------------------------------------------------------------------------
+\para{Decision and Deductions}
+%Unsafe Trace Transformers in Abstract Static Assignment Lattice
+%
+A counterexample search requires a generalized decision operator as well as a set 
+of transformers that soundly approximate $f_{unsafe}^{G}$.  Recall that 
+$f_{unsafe}^{G}$ is a lower closure operator, which may be approximated 
+by computing a greatest fixed point in the abstract.  
+%
+We now formally define the initial set of transformers $F^\sharp$ over
+$\widehat{\mathcal{SA}_{G}}$, that uses strongest postcondition and 
+existential precondition to perform forward, backward and multi-way 
+analysis.
+%
+\begin{definition} (Unsafe Trace Transformer in $\widehat{\mathcal{SA}}$). 
+  $f_{aunsafe}^{\rightarrow}, f_{aunsafe}^{\leftarrow} : \widehat{\mathcal{SA}_{G}}
+  \rightarrow \widehat{\mathcal{SA}_{G}}$
+  \[
+    f_{aunsafe}^{\rightarrow}(A) \mathrel{\hat=} \mathit{gfp}\; Z.\;
+    apost_{\constraints}(A \meet Z)
+    \quad
+    f_{aunsafe}^{\leftarrow}(A) \mathrel{\hat=} \mathit{gfp}\; Z.\;
+    apre_{\constraints}(A \meet Z)
+  \]
+   \[
+      f_{aunsafe}^{G} = f_{aunsafe}^{\leftarrow}(A) \meet f_{aunsafe}^{\rightarrow}(A) 
+   \]  
+\end{definition}
+%
+%\paragraph{Property of Unsafe Trace Transformer}
+%
+\Omit{
+However, each of the transformers 
+above is computed using a least fixed point.  Hence, the result is a nested fixed point.  
+The nested computation of a greatest fixed point using forward and backward analysis
+based on least fixed points is a well-known technique in program
+analysis~\cite{Cousot99}, and is used to necessarily increase precision in the
+abstract.}
+%
+\begin{theorem}
+  The transformers $f_{aunsafe}^{\rightarrow}$, $f_{aunsafe}^{\leftarrow}$ and 
+  $f_{aunsafe}^{G}$ soundly approximate $f_{utrace}^{G}$.
+\end{theorem}
+\begin{proof}
+ We prove that $f_{aunsafe}^{\rightarrow}$ soundly overapproximates 
+ $f_{utrace}^{G}$. 
+  We prove that  
+  $ f_{unsafe}^{G} \circ \gamma_F \circ \gamma_S \circ \gamma \subseteq 
+     \gamma_F \circ \gamma_S \circ \gamma \circ f_{aunsafe}^{\rightarrow} 
+  $.
+ Recall that $\widehat{SA}_{G}$ overapproximates the concrete
+ $\powerset(\Pi)$ via the function $(\alpha \circ \alpha_S \circ \alpha_F,
+ \gamma \circ \gamma_S \circ \gamma_F)$. Also, $apost_s$ soundly approximate
+  $tpost$. For any element $g \in \widehat{\mathcal{SA}_{G}}$, the abstract unsafe trace
+  transformer $f_{aunsafe}^{\rightarrow}$, $Z \mapsto apost_s(Z \meet A)$ 
+  soundly approximates the concrete unsafe trace transformer
+  $f_{unsafe}^{G}$, $Z \mapsto \gamma(g) \cap (\mathcal{I} \cup tpost(Z))$.
+  Since $\mathcal{F}_G$ overapproximates $\powerset(\Pi)$ following
+  Proposition~\ref{ag} and $\mathcal{SA}_G$ is exact to $\mathcal{F}_G$, so
+  $\widehat{\mathcal{SA}_G}$ overapproximates $\powerset(\Pi)$.  From fixed
+  point transfer theorem~\cite{fpt}, a trace 
+  $\pi \in f_{unsafe}^{G} \circ \gamma_F \circ \gamma_S \circ \gamma$ also
+  implies $\pi \in \gamma_F \circ \gamma_S \circ \gamma \circ
+  f_{aunsafe}^{\rightarrow}$. The proof for $f_{aunsafe}^{\leftarrow}$ is similar. 
+  %a set of traces computed by $f_{unsafe}^G$ is
+  %therefore also obtained from $f_{aunsafe}^{\rightarrow}$.
+  \rmcmt{
+  Assume a trace $\pi \in f_{unsafe}^{G} \circ \gamma_F \circ \gamma_S \circ
+  \gamma(a)$.
+  Then $\pi$ is a counterexample trace such that for all $((id,v),val) \in a$
+  and $(v,\omega) \in \pi$, it holds that $\omega \in \gamma_F \circ \gamma_S \circ 
+  \gamma \circ a(id,v)$.  }
+\end{proof}
+%
+%===============================================================================
+%\input{gamma-complete}
+%===============================================================================
+%
+%
+\para{Generalized Decision Operator}~\label{decision}
+%
+A model search heuristically searches for counterexample trace or a conflict.
+This process generates a downward iteration sequence in the lattice of
+$\widehat{\mathcal{SA}_{G}}$.  A decision in CDCL solver heuristically picks 
+an unassigned variable and assigns a value to it.  
+Thus, a decision refines a downwards iteration sequence when the transformers $apost_{s}$ 
+and $apre_{s}$ fails to make a refinement.  Given an abstract element 
+$a$ obtained from the fixed point iteration, a decision $f_{dec}$ in 
+$\widehat{\mathcal{SA}_{G}}$ heuristically chooses a meet 
+irreducible $(a')$ of the form $C\vec{x} \leq \vec{d}$, such that
+the resultant element is strictly smaller than the greatest 
+lower bound of the pair $(a, a')$.  We formally define a generalized decision operator 
+over $\widehat{\mathcal{SA}_{G}}$. 
+%
+\begin{definition} (Generalized Decision Operator) 
+  $f_{dec} \colon \widehat{\mathcal{SA}_{G}} \times \widehat{\mathcal{SA}_{G}}
+  \rightarrow \widehat{\mathcal{SA}_{G}}$  
+   \[ f_{dec}(a, a') = 
+        a \sqcap a', \text{where}\; a\neq a' \wedge (a \sqcap a' \sqsubseteq a)
+        \wedge (a \sqcap a' \sqsubseteq a')
+   \]     
+\end{definition}
+%
+\begin{example}
+%
+Fig.~\ref{model-search} shows an example run for the counterexample search procedure 
+for the program in~Fig.\ref{fig:se}.  The elements obtained using $f_{aunsafe}^{G}$ 
+transformer application over an overapproximate strongest postcondition is marked 
+in blue in Fig.~\ref{model-search}.  
+%The example demonstrates that model search computes a downward iteration sequence.  
+Starting from $\top$, forward analysis concludes that $x$ is between -2 and 2
+from $apost_{x:=-2} \cup apost_{x:=0} \cup apost_{x:=2}$.  Note that the loop is completely 
+unwound and all statements corresponding to the loop are collectively referred to as $loop$. 
+A forward fixed-point analysis (marked by $apost_{loop}$) does not yield any new 
+information. Clearly, the analysis
+is not precise to infer anything about the reachability of the error location $Error$. 
+Hence, we apply a decision by picking a meet irreducible $y\geq 2$ to increase the 
+precision of analysis.  We then apply forward analysis from this decision which
+yields a downward iteration sequence as shown in lower part of
+Fig.~\ref{model-search}.  Forward analysis concludes that $\{y \geq 4\}$.
+This leads to \emph{conflict}, marked as $\bot$. Hence, the error location
+$Error$ is unreachable for this decision. 
+\end{example}
+%
+\begin{figure}[t]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.55}{\import{figures/}{model_search.pspdftex}}
+  \caption{Model Search as Downward Iteration Sequence with Decisions and
+  Deductions}
+\label{model-search}
+\end{figure}
+%
+%
+%===============================================================================
+\section{Conflict Analysis in Programs}~\label{conflict-analysis}
+%===============================================================================
+%
+A conflict analysis procedure in CDCL solver finds the reason for 
+a conflict by analyzing the deductions made during the 
+model search phase through \emph{conflict resolution}~\cite{cdcl}. 
+Conflict analysis in CDCL solver is different from DPLL solver
+in a way that it allows non-chronological backjumping which can discard 
+multiple levels of decisions and deductions stack, and it learns a 
+reason for a conflict called \emph{conflict clause} that prevents 
+the model search from re-entering into the conflicting search space 
+in the future.  A conflict clause in CDCL solver is a clause that 
+expresses the fact that some combinations of variable assignment 
+are not valid.  
+%
+
+
+Conflict analysis in CDCL solver can be seen as abductive
+reasoning~\cite{dhk2013-popl}. 
+\Omit{A logic-based abductive inference~\cite{abd1} tries to find an explanation
+$\mathcal{A}$ from a statement $\formula$ such that the truth of $\mathcal{A}$ 
+is sufficient to guarantee the truth of $\formula$ and $\mathcal{A}$ is 
+consistent with the background theory.}
+An abductive inference is a dual of deductive inference that takes an input 
+set $\allval$ contradicting a $\formula$ and find a weakest reason or 
+explanation for $\allval$, assuming that $\formula$ is unsatisfiable.  
+
+\Omit{
+Figure~\ref{conflict-cdcl} shows a conflict
+analysis procedure in CDCL solver.  Starting from the initial conflict, $\{p:t,
+q:t, r:f, s:f\}$, the solver derives a generalized conflict reason $\{p:t\}$ 
+which underapproximate the initial conflict reason, through Unique Implication 
+Point (UIP) based conflict resolution algorithm~\cite{uip,cdcl}.  It is important 
+to note that the conflict analysis in CDCL operates on the downset abstraction 
+of partial assignments domain.  
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.85}{\import{figures/}{conflict_cut.pspdftex}}
+\caption{Generalizing Conflict Reason in CDCL Solvers \label{conflict-cdcl}}
+\end{figure}
+%
+}
+
+A safe trace transformer, $f_{safe}^{G}$ computes a set of safe or
+invalid traces.  An effective conflict analysis for program requires a set of 
+transformers that underapproximate $f_{safe}^{G}$, over the 
+downset abstraction of $\widehat{\mathcal{SA}_{G}}$.  A conflict reason 
+is an underapproximation of set of safe or invalid traces. We present a
+technique to derive a conflict reason.  
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.85}{\import{figures/}{downset.pspdftex}}
+\caption{Lattice for Conflict Analysis \label{downset}}
+\end{figure}
+%
+Recall that a program transformer $s \in \Sigma$ transforms the memory state of a
+program and is associated with a transition relation,
+$\mathcal{ST}_{s}^{\Omega}$.  We can associate each $s \in \Sigma$ with a weakest
+precondition $\widehat{pre_{s}}$ and a universal postcondition
+$\widehat{post_{s}}$. 
+\Omit{
+We now define these statement transformers. 
+%
+\begin{definition} (Universal Postcondition and Weakest Precondition Transformers).
+  \[
+    \widehat{post_{s}}(A) \mathrel{\hat=} \{\omega' \mid \forall \omega \in
+     \Omega. \omega \in A \vee (\omega,\omega') \not\in \mathcal{ST}_{s}^{\Omega}\} 
+  \] 
+  \[ 
+     \widehat{pre_{s}}(A) \mathrel{\hat=} \{\omega \mid \forall \omega' \in
+     \Omega. \omega' \in A \vee (\omega,\omega') \not\in \mathcal{ST}_{s}^{\Omega}\} 
+  \]
+\end{definition}
+}
+%
+Haller et. al. in~\cite{sas12} shows that conflict analysis in CDCL solver operate 
+over an underapproximate domain, which is a downward closed set of partial 
+assignments. 
+%
+To compute an underapproximation of $f_{safe}^{G}$, we underapproximate the
+state transformers, $\widehat{post_s}$ and $\widehat{pre_s}$.  The lattice  
+$\mathcal{SA}_{G}$ is underapproximated by the downset completion 
+$\mathbb{D}(\widehat{\mathcal{SA}_{G}})$, which contains downwards closed
+subsets of $\mathcal{SA}_{G}$.
+%
+\begin{proposition}
+\[
+  (\mathcal{SA}_{G},\supseteq_{SA})
+   \galois{\alpha_{\mathbb{D}}}{\gamma_{\mathbb{D}}}
+   (\mathbb{D}(\widehat{\mathcal{SA}_{G}}),\sqsupseteq_{SA}^\dagger) 
+\]
+  \[
+    \alpha_{\mathbb{D}}(a) \mathrel{\hat=} \{a' \mid \gamma_{SA}(a')
+    \subseteq_{SA} a \}
+  \qquad
+  \gamma_{\mathbb{D}}(b) \mathrel{\hat=} \{\bigcup_{b' \in decomp(b)}
+  \gamma_{SA}(b')\}
+  \]
+\end{proposition}
+%
+\begin{proof} 
+  \rmcmt{The pair $(\alpha_{\mathbb{D}},\gamma_{\mathbb{D}})$ forms a galois connection. 
+  We avoid the proof since this is standard.}
+\end{proof}
+%
+Let $\widehat{apre_s}$ and $\widehat{apost_s}$ be sound underapproximations of
+weakest precondition transformer $\widehat{pre_s}$ and universal postcondition 
+transformer $\widehat{post_s}$ over $\mathbb{D}(\widehat{\mathcal{SA}_{G}})$. 
+%
+The global abstract static assignment transformers for the 
+lattice $\mathbb{D}(\widehat{\mathcal{SA}_G})$ over a set of 
+SSA constraints $\constraints$ are obtained from the underapproximate 
+abstract state transformers, $\widehat{apost_s}$, $\widehat{apre_s}$. 
+This is defined next.
+%
+\begin{definition} (Global Underapproximate Abstract Static Assignment
+  Transformers for $\mathbb{D}(\widehat{\mathcal{SA}_G})$). 
+  \[ 
+     \widehat{apost_{\constraints}}, \widehat{apre_{\constraints}} : 
+     \mathbb{D}(\widehat{\mathcal{SA}_G}) \rightarrow
+     \mathbb{D}(\widehat{\mathcal{SA}_{G}}) 
+   \]
+   \[
+     \widehat{apost_{\constraints}}(a) \mathrel{\hat=} 
+     \underset{\sigma \in \constraints}{\bigsqcap} \widehat{apost_{\sigma}} \circ a 
+   \]
+  \[
+    \widehat{apre_{\constraints}}(a) \mathrel{\hat=} 
+    \underset{\sigma \in \constraints}{\bigsqcap} \widehat{apre_{\sigma}} \circ a 
+   \]
+\end{definition}
+%
+The transformers, $\widehat{apost_{\constraints}}$ and
+$\widehat{apre_{\constraints}}$, soundly underapproximate 
+their concrete counterparts, $\widehat{post_{\constraints}}$ 
+and $\widehat{pre_{\constraints}}$ respectively. 
+%
+
+
+A conflict reason is derived by analyzing the deductions made 
+from $f_{aunsafe}^{G}$ during the model search phase.  
+%Recall that the deductions are obtained by approximating 
+%a least fixed point using the strongest post-condition.  
+A conflict analysis procedure generalizes the deduced element by computing a
+least fixed point of a weakest pre-condition transformer or an universal
+postcondition transformer in the downset abstract domain
+$\mathbb{D}(\widehat{\mathcal{SA}_{G}})$.  
+%
+We now define a set of transformers 
+$f_{asafe}^G$ in $\mathbb{D}(\widehat{\mathcal{SA}_{G}})$, that underapproximates
+$f_{safe}^{G}$.  Below, $A$ is the downset closure of the original conflict
+reason. 
+%
+\begin{definition} (Safe Trace Transformers in
+  $\mathbb{D}(\widehat{\mathcal{SA}})$). 
+  \[
+    f_{asafe}^{\rightarrow}, f_{asafe}^{\leftarrow} :
+  \mathbb{D}(\widehat{\mathcal{SA}_{G}})
+  \rightarrow \mathbb{D}(\widehat{\mathcal{SA}_{G}})
+  \]
+  \[
+    f_{asafe}^{\rightarrow}(A) = \mathit{lfp}\; Z.\;
+    \widehat{apost_{\constraints}}(A \join Z)
+    \quad
+    f_{asafe}^{\leftarrow}(A) = \mathit{lfp}\; Z.\; 
+    \widehat{apre_{\constraints}}(A \join Z)
+  \] 
+\end{definition}
+%
+\begin{example}
+  Let us revisit the example in Figure~\ref{fig:se} and the corresponding
+  deductions in Figure~\ref{model-search}. The conflict analysis procedure is
+  shown in Figure~\ref{conflict-example}.  We iteratively apply $\widehat{apre}$ 
+  starting from the conflict element ($\bot$), the result of which is shown in
+  bold text.  For example, $\widehat{apre_{y < 0}}(\bot)= \{y \geq 0\}$; whereas the
+  result of $f_{aunsafe}^{G}$ transformer application via strongest postcondition 
+  is $\{y\geq 4\}$.  So, we heuristically pick a generalized element $a$ such 
+  that $\{y\geq 4\} \sqsubseteq a \sqsubseteq \{y \geq 0\}$; we pick $a=\{y \geq 0\}$ 
+  through the application of upwards
+  interpolation~\cite{leo-thesis} (corresponds to relaxation of narrowing
+  operation in abstract interpretation), $int\upharpoonright(y \geq 0, y \geq 4)$, 
+  marked in blue.  \rmcmt{The heuristic generalization of conflict reason is
+  explained more formally in section~\ref{heu-gen}.}
+  Note that the loop is completely unwound and all statements corresponding 
+  to the loop are collectively referred to as $loop$.
+  We then repeat the process marked by $\widehat{apre_{loop}}$. 
+  Subsequently, we derive a generalized reason, $\{x>0, y \geq 0\}$, that strictly generalizes
+  the decision $y>=2$. The conflict reason $\{x \geq 0,y \geq 0\}$ underapproximates 
+  set of safe traces. \\
+  %\rmcmt{define upwards interpolation}
+\end{example}
+%
+\begin{figure}[t]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.55}{\import{figures/}{conflict_example.pspdftex}}
+  \caption{Conflict Analysis with underapproximate weakest precondition and
+  upwards interpolation}
+\label{conflict-example}
+\end{figure}
+%
+
+%
+\rmcmt{
+Note that the lattice $\mathbb{D}(\widehat{\mathcal{SA}_{G}})$ underapproximates 
+$\mathcal{SA}_{G}$.  Further, $\mathcal{SA}_{G}$ is an
+overapproximation of $\powerset(\Pi)$. The concrete transformer 
+$f_{safe}^{G}$ is a safe trace transformer over $\powerset(\Pi)$.  
+A sound underapproximation of $f_{safe}^{G}$ 
+may not be possible due to the combination of overapproximation and underapproximation. 
+We now present a way to build a sound underapproximation of $f_{safe}^{G}$. 
+}
+%
+\subsection{Generalized Unit rule}~\label{learning}
+%
+CDCL solver learns the negation of conflict reason that prevents the model search
+from re-entering the conflicting region of the search space.  Recall that a conflict 
+reason underapproximates a set of safe or invalid traces.  A negation of conflict reason 
+overapproximates a set of unsafe and valid traces.  
+Clause learning in ACDLP learns new abstract transformers which are implicitly represented 
+by clauses.  Since the unit rule is the workhorse of the model search phase in SAT solvers, 
+so clause learning can be viewed as learning a unit-rule transformer.  Thus, learning adds 
+a \emph{unit rule transformer} $(AUnit)$ to the initial set of \rmcmt{SSA constriants}, $\Sigma^\dagger$.  
+Intuitively, transformer learning through conflict analysis makes 
+\rmcmt{$\Sigma^\dagger$} a closer approximation of the unsafe trace 
+transformer, $f_{unsafe}^{G}$.
+
+
+%
+$AUnit$ is a generalisation of the propositional unit rule.  
+Recall that $\formula$ is a safety formula that is obtained through 
+conjunction of all SSA elements in $\Sigma^{\dagger}$. 
+For an abstract lattice $\widehat{\mathcal{SA}_{G}}$ with
+complementable meet irreducibles and a set of meet irreducibles $\conflictset
+\subseteq \widehat{\mathcal{SA}_{G}}$ such that $\bigsqcap
+\conflictset$ does not satisfy $\formula$, $\aunit_\conflictset:
+\widehat{\mathcal{SA}_G} \rightarrow \widehat{\mathcal{SA}_G}$ 
+is formally defined as follows.
+\[ \aunit_\conflictset(\absval) =
+ \left\{\begin{array}{l@{\quad}l@{\qquad}l}
+  \bot       & \text{if } \absval \sqsubseteq \bigsqcap \conflictset & (1)\\
+  \bar{t}    & \text{if } t \in \conflictset \; \text{and} \; \forall t' \in \conflictset
+  \setminus \{t\}. \absval  \sqsubseteq t' & (2) \\
+  \top & \text{otherwise} & (3) \\
+ \end{array}\right.
+\]
+%
+Rule (1) shows $\aunit$ returns $\bot$ since 
+$\absval \sqsubseteq \bigsqcap \conflictset$ is conflicting.  
+Rule (2) of $\aunit$ infer a valid meet irreducible, 
+which implies that $\conflictset$ is unit.  Rule (3) of  
+$\aunit$ returns $\top$ which implies that the learnt clause is not 
+{\em asserting} after backtracking.  This would prevent any new 
+deductions from the learnt clause. Progress is then made by decisions. 
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.70}{\import{figures/}{learning.pspdftex}}
+\caption{Downward Iteration Sequence with Learned transformer \label{learning}}
+\end{figure}
+%
+\begin{example}
+Fig.~\ref{learning} shows the sequence of fixed point iteration with the learned
+transformer $y \leq 0$, obtained from $AUnit$.  Clearly, this also leads to 
+\emph{conflict}. There are no further cases to explore. Thus, the procedure 
+terminates and returns \emph{safe}.
+\end{example}
+%
+\section{Putting it all together}
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.80}{\import{figures/}{schema.pspdftex}}
+\caption{Building Blocks for Instantiating CDCL Architecture for Program
+  Analysis \label{schema}}
+\end{figure}
+%
+Figure~\ref{schema} shows the basic building blocks for instantiating CDCL 
+architecture as program analyzer.  Elements of
+$\widehat{\mathcal{SA}_{G}}$ forms a lattice of approximation of program traces
+ordered by $\sqsubseteq$ where each element $a \in \widehat{\mathcal{SA}_{G}}$ 
+represents a memory state of the program.  Each statement $s$ in the program
+defines four transformers, strongest postcondition $post_s$, existential precondition 
+$pre_s$, universal postcondition $\widehat{post_s}$, and weakest precondition 
+$\widehat{pre_s}$.  Model search computes an overapproximation of unsafe trace 
+transformer using fixed point over $f_{aunsafe}^{\leftarrow}$, $f_{aunsafe}^{\rightarrow}$ 
+and decisions operator $f_{dec}$ to improve precision.  
+Whereas, conflict analysis computes an underapproximation of safe trace transformer 
+using fixed point over $f_{asafe}^{\leftarrow}$, $f_{asafe}^{\rightarrow}$ and
+heuristic choice as upwards interpolation $int\upharpoonright$ to pick a conflict reason.
+Learning is a reduction over $F^{\sharp}$ that is parameterized by an element of
+downset abstract domain of $\widehat{\mathcal{SA}_{G}}$.
+%
+\begin{figure}[t]
+\begin{minipage}{4cm}
+\centering
+\scalebox{.40}{\import{figures/}{acdl_fixpoint.pspdftex}}
+  %\caption{Fixpoint computation during Abstract Model Search Phase (Red lines denote
+  %decision, Blue lines denote deduction)}
+  \label{model-fixpoint}
+\end{minipage}%  
+\hspace{10em}%
+\begin{minipage}{4.0cm}
+\centering
+\scalebox{.40}{\import{figures/}{conflict-fixpoint.pspdftex}}
+  %\caption{Conflict Analysis with Underapproximate Weakest
+  %Precondition and Upwards Interpolation}
+\label{conflict-fixpoint}
+\end{minipage}
+  \caption {
+  A. Fixpoint computation during Abstract Model Search Phase (Red lines denote
+  decision, Blue lines denote deduction), B. Conflict Analysis with 
+  Underapproximate Weakest Precondition and Upwards Interpolation
+  \label{fixpoint}}
+\end{figure}
+%
+
+Fig.~\ref{fixpoint} shows a graphical execution of the model search and 
+conflict analyis procedures over a lattice of fixpoints.  The region marked 
+with green in Fig.~\ref{fixpoint}A and Fig.~\ref{fixpoint}B are the set of 
+fixed points of $F^\sharp$ and pre-fixed points $(f_{asafe}^G(C) \sqsupseteq C)$ 
+respectively.   The least among the fixed points is marked as
+$lfp(F^\sharp)$, whereas the greatest among the fixed points is marked as
+$gfp(F^\sharp)$. The concrete unsafe trace transformer $f_{unsafe}$ is a 
+lower closure, so the lfp is $\bot$ in Fig.~\ref{fixpoint}A.  Whereas, the 
+concrete safe transformer $f_{safe}$ is upper closure, so the gfp is 
+$\top$ in Fig.~\ref{fixpoint}B.
+
+\Omit{
+The region in the intersection of green and golden 
+ellipse structure is the set of fixed-points, which is both a pre-fixed point and
+post-fixed point.  
+}
+%
+
+Fig.~\ref{fixpoint}(A) shows that model search procedure starts 
+from $\top$, and make sequence of deductions (marked in blue) 
+through the abstract transformers in $F^\sharp$, until it reaches 
+the greatest fixed point.  Recall that $F^\sharp$ is the
+set of transformers in $\widehat{\mathcal{SA}_G}$ that are used for forward, 
+backward and multi-way analysis. 
+%until it reaches the greates fixed point. 
+%Recall that BCP in CDCL solver computes a greatest fixed point through 
+%repeated application of the unit rule transformer. 
+When the deductions can not be refined further, a decision is made which 
+jumps under the greatest fixed point, as shown by red arrows in 
+Figure~\ref{fixpoint}A.   
+\Omit{
+A decision accelerates the fixed point 
+computation and is necessary to quickly converge on a conflict or a 
+counterexample trace. }
+A sequence of decisions and deductions follows, which
+terminates in the $\gamma$-complete region of the lattice (marked in pink). The
+transformer $F^\sharp$ is $\gamma$-complete on $G$ if $\gamma(F^\sharp(G))
+\subseteq F(\gamma(G))$, where $F$ is the concrete unsafe trace transformer
+$f_{unsafe}^{G}$.  This implies, that a counterexample is obtained and the
+procedure terminates.
+%
+
+
+Fig.~\ref{fixpoint}(B) shows that conflict analysis procedure starts from a
+conflict $\{\mathcal{C}\}$, and iteratively generalizes an element by computing a
+least fixed point using a weakest precondition, $\widehat{apre}_s$ (marked by
+red arrows), followed by heuristically choosing a candidate reason for conflict 
+through upwards interpolation (marked by blue arrows) that underapproximates 
+$\widehat{apre}_s$.   Figure~\ref{fig:acdcl} presents an architectural view 
+of a learning based program analyzer using CDCL architecture.  
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.65}{\import{figures/}{acdcl.pspdftex}}
+\caption{A Learning based Program Analyzer \label{fig:acdcl}}
+\end{figure}
+%
+%
+
+\Omit {
+\begin{figure}
+\centering
+\vspace*{-0.2cm}
+\scalebox{.70}{\import{figures/}{acdlp-top.pspdftex}}
+\caption{Architectural View of ACDLP \label{conflict}}
+\end{figure}
+%
+\rmcmt{define transformers}
+%
+\begin{algorithm2e}[t]
+\DontPrintSemicolon
+\SetKw{return}{return}
+\SetKwRepeat{Do}{do}{while}
+%\SetKwFunction{assume}{assume}
+%\SetKwFunction{isf}{isFeasible}
+\SetKwData{conflict}{conflict}
+\SetKwData{safe}{safe}
+\SetKwData{sat}{sat}
+\SetKwData{unsafe}{unsafe}
+\SetKwData{unknown}{unknown}
+\SetKwData{true}{true}
+\SetKwInOut{Input}{input}
+\SetKwInOut{Output}{output}
+\SetKwFor{Loop}{Loop}{}{}
+\SetKw{KwNot}{not}
+\begin{small}
+\Input{A program in the form of a set of abstract transformers $\abstransset$.}
+\Output{The status \safe or \unsafe. %and a counterexample if \unsafe.
+}
+$\trail \leftarrow \langle\rangle$, $\reasons \leftarrow []$ \;
+$\mathit{result} \leftarrow \deduce_{\propheur}(\abstransset,\trail,\reasons)$ \;
+\lIf{$\mathit{result}$ = \conflict} {
+  \return \safe}
+\While{$true$} 
+{
+\lIf{$\mathit{result}$ = \sat} {
+  \return \unsafe}
+  $\decisionvar \leftarrow \decide_{\decheur}(\abs(\trail))$ \;
+  $\trail \leftarrow \trail \cdot \decisionvar$ \; 
+  $\reasons[|\trail|] \leftarrow \top$ \;
+  $\mathit{result} \leftarrow \deduce_{\propheur}(\abstransset,\trail,\reasons)$\;
+  \Do{$\mathit{result} = \conflict$} {
+    \lIf{$\neg \analyzeconflict_{\confheur}(\abstransset,\trail,\reasons)$} {
+      \return \safe
+    }
+    $\mathit{result} \leftarrow \deduce_{\propheur}(\abstransset,\trail,\reasons)$ \;
+  }
+}
+\end{small}
+\caption{Abstract Conflict Driven Learning for Programs $ACDLP_{\propheur,\decheur,\confheur}(\abstransset)$ \label{Alg:acdcl}}
+\end{algorithm2e}
+%
+In this section, we present our framework called \emph{Abstract Conflict 
+Driven Learning} that uses abstract model search and abstract 
+conflict analysis procedures for safety verification of programs. 
+The input to ACDLP (Algorithm~\ref{Alg:acdcl}) is a
+program in the form of a set of abstract transformers
+$\abstransset=\{\abstrans{\domain}{\sigma}|\sigma\in\Sigma\}$
+w.r.t.\ an abstract domain~$\domain$.  Recall that the safety 
+formula $\bigwedge_{\constraint\in\constraints} \constraint$ 
+is unsatisfiable if and only if the program is safe.  
+The algorithm is parametrised by heuristics for propagation $(\propheur)$, 
+decisions $(\decheur)$, and conflict analysis $(\confheur)$.
+Approximation of the concrete transformers in 
+$\abstransset$ are typically available in abstract domain in the 
+form of strongest-post condition or weakest pre-condition. 
+The algorithm maintains a propagation trail $\trail$ and 
+a reason trail~$\reasons$.
+The propagation trail stores all meet irreducibles inferred by 
+the abstract model search phase (deductions and decisions).  
+The reason trail maps the elements of the propagation trail to the
+transformers $\abstransel{}\in\abstransset$ that were used to
+derive them. 
+%
+\begin{definition} 
+The \emph{abstract value} $\abs(\trail)$ corresponding to 
+the propagation trail $\trail$ is the conjunction of the 
+meet irreducibles on the trail:
+$\abs(\trail)=\bigsqcap_{m \in \trail}m$ with
+$\abs(\trail)=\top$ if $\trail$ is the empty sequence.
+\end{definition}
+%
+The algorithm begins with an empty $\trail$, a empty $\reasons$, and the
+abstract value $\top$.  The procedure $\deduce$ (details in
+Section~\ref{sec:deduce}) computes a greatest fixed-point over the
+transformers in $\abstransset$ that refines the abstract value,
+similar to the Boolean Constraint Propagation
+step in SAT solvers.  If the result of $\deduce$
+is \textsf{conflict} ($\bot$), the algorithm terminates with
+\textsf{safe}.  Otherwise, the analysis enters into the while loop at line 4
+and makes a new decision by a call to $\decide$ (see
+Section~\ref{sec:decide}), which returns a new meet irreducible
+$\decisionvar$.
+%
+We concatenate $\decisionvar$ to the trail~$\trail$.  The decision
+$\decisionvar$ refines the current abstract value $\abs(\trail)$ represented
+by the trail, i.e., $\abs(\trail\cdot\decisionvar)\sqsubseteq \abs(\trail)$.
+%
+For example, a decision in the interval domain restricts the range of 
+intervals for variables.
+%
+We set the corresponding entry in the reason trail~$\reasons$ to $\top$
+to mark it as a decision.
+%
+The procedure $\deduce$ is called next to infer new meet irreducibles
+based on the current decision.  The model search phase
+alternates between the decision and deduction until $\deduce$ returns
+either \textsf{sat} or \textsf{conflict}.  
+%
+If  $\deduce$ returns  \textsf{sat}, then 
+we have found an abstract value that represents models of the safety formula, which
+are counterexamples to the required safety property, and so ACDLP return
+\textsf{unsafe}.
+%
+If  $\deduce$ returns  \textsf{conflict}, 
+the algorithm enters in the $\analyzeconflict$ 
+phase (see Section~\ref{sec:conflict}) to learn the reason for the conflict.   There can be multiple
+incomparable reasons for conflict.  ACDLP heuristically 
+chooses one reason~$\conflictset$ and learns it 
+by adding it as an abstract transformer to $\abstransset$. The analysis 
+backtracks by removing the content of $\trail$ up to a point where it does not 
+conflict with $\conflictset$.  ACDLP then performs deductions with the learnt 
+transformer.  If $\analyzeconflict$ returns $\false$, then no further
+backtracking is possible.  Thus, the safety formula is unsatisfiable
+and ACDLP returns \textsf{safe}.
+}

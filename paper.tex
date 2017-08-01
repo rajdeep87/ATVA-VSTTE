@@ -41,7 +41,6 @@
 
 \newcommand{\tool}[1]{\textsc{#1}\xspace}
 \newcommand{\cbmcv}{\tool{cbmc 5.0}}
-\newcommand{\Omit}[1]{}
 \newcommand{\mydef}[1]{\begin{definition}#1\end{definition}}
 \newcommand{\rmcmt}[1]{{\color{magenta}{#1}}}%#1
 \newcommand{\pscmt}[1]{{\color{blue}{#1}}}%#1
@@ -88,11 +87,82 @@ Daniel Kroening\inst{1} \and Tom Melham\inst{1}}
   a heuristic choice of conflict reasons.  Thus, CDCL architecture can be seen 
   as a natural tool to build a precise program analyzer that uses decision and 
   learning to automatically refine the precision of an analysis. This paper
-  present an end-to-end abstract interpretation perspective of Bounded Model
-  Checking using CDCL.  
+  present a sound mathematical framework for building a precise abstract 
+  interpretation based program analyzer using CDCL architecture as well as a practical tool 
+  that implements these ideas for automatic bounded safety verification of C programs. 
+  We~evaluate the performance of our analyser by comparing with CBMC, which
+  uses Boolean CDCL, and Astr{\'e}e, a commercial abstract interpretation tool. 
+  We~observe two orders of magnitude reduction in the number of decisions,
+  propagations, and conflicts as well as a~1.5x speedup in runtime compared to
+  CBMC.  Compared to Astr{\'e}e, ACDLP solves twice as many benchmarks and has
+  much higher precision.  
   %Our work is the first step towards lifting CDCL algorithm for design and 
   %implementation of a precise static analyzers.
 %
 \end{abstract}
+
+%===============================================================================
+\input{introduction}~\label{intro}
+%===============================================================================
+
+%===============================================================================
+\input{solver}
+%===============================================================================
+
+%===============================================================================
+\input{program}
+%===============================================================================
+
+%===============================================================================
+\input{acdlp}
+%===============================================================================
+
+%===============================================================================
+%\input{completeness}
+%===============================================================================
+
+%===============================================================================
+\input{proof}
+%===============================================================================
+
+%===============================================================================
+%\input{ssa}
+%===============================================================================
+
+%===============================================================================
+%\input{acdlp}
+%\input{deductions}
+%===============================================================================
+
+%===============================================================================
+%\input{sat-example}
+%===============================================================================
+
+%===============================================================================
+\input{experiments}
+%===============================================================================
+
+%===============================================================================
+\input{related_work}
+%===============================================================================
+
+%===============================================================================
+\section{Conclusion}
+%===============================================================================
+%
+The lattice theoretic account of CDCL algorithm provides a natural extension 
+to other domains.  In this paper, we present a full abstract interpretation
+account of bounded model checking using CDCL architecture.  To this end, we
+first show that finding non-trivial trace abstraction in presence of loops, 
+that satisfy properties of CDCL can be achieved through logical encoding of
+program semantics using static single assignment form.  We then present a
+characterization of CDCL as a tool to compute fixed point approximation of unsafe 
+trace transformer over a lattice of program traces.  We showed that decision 
+and learning in CDCL automatically allows the analysis to recover from
+imprecision.  Our framework provides a mathematical basis for instantiating 
+CDCL architecture for program analysis using the framework of abstract interpretation. 
+A practical benefit of our work is a new, learning based architecture for implementing 
+precise \rmcmt{program or safety?} analysis tools, through combination of abstraction
+interpretation and CDCL-based SAT Solvers.  
 
 \end{document}

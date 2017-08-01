@@ -1,0 +1,503 @@
+\section{Fixed-point Characterisations of Propositional Satisfiability}
+%
+Abstract Conflict Driven Clause Learning (ACDCL)~\cite{dhk2013-popl} is a 
+lattice-based generalization of CDCL.  Silva et. al.~\cite{sas12}
+shows the correspondences between propositional CDCL and lattice-based
+abstractions, which are summarized in Table~\ref{connection}.  
+%
+\begin{table}[]
+\centering
+\caption{Components in propositional solver and their counterparts in lattice-theoretic generalization}
+\label{connection}
+\begin{tabular}{ll}
+\toprule
+  Propositional Solver & Abstract Interpretation \\
+  \midrule
+Partial assignment & Abstract Domain with complementable meet irreducibles \\
+Singleton assignments & Meet Irreducibles   \\
+CNF formula & Abstract Deduction Transformer    \\
+Unit rule & Best Abstract Transformer \\
+BCP & Greatest Fixed-Point Computation \\
+Decision & Dual Widening \\ 
+Conflict Analysis & Abductive Reasoning \\
+Clause Learning & Synthesizing Abstract Transformer for negation \\ 
+\bottomrule
+\end{tabular}
+\end{table}
+%
+
+
+%The lattice theoretic generalization of the propositional satisfiability 
+%and the connection between the propositions and partial assignments and that of lattice and
+%abstraction is summarized in Table~\ref{connection}.  
+Silva et. al.~\cite{popl2014} proposed an abstract satisfaction framework that 
+presents an application of abstract interpretation to design satisfiability algorithms 
+following the correspondances in Table~\ref{connection}.  \rmcmt{We reinterpret the 
+lattice based generalizations of the propositional satisfiablity algorithm 
+in subsequent section for lifting the abstraction satisfaction framework to 
+relational lattice structures for safety verification.}
+%
+We define fixed-point characterisations of the models and countermodels of a
+formula and express satisfiability and validity in terms of these fixed-points.
+\rmcmt{Change "we" to passive since this is background}
+
+
+Let $Prop$ be a set of propositional variables.  A literal is a variable or its
+negation.  Let $\mathbb{B} \mathrel{\hat=} \{t,f\}$ be the set of truth values. 
+An assignment $\tau: Prop \rightarrow \mathbb{B}$ maps variables to truth
+values. 
+%
+\begin{definition}
+  An assignment $\tau$ is a \emph{model} of a formula $\varphi$, denoted $\tau
+  \models \varphi$, if $\tau$ satisfies $\varphi$.
+\end{definition}
+%
+\begin{definition}
+  An assignment $\tau$ is a \emph{countermodel} of a formula $\varphi$, denoted $\tau
+  \not\models \varphi$, if $\tau$ does not satisfy $\varphi$.
+\end{definition}
+
+\rmcmt{Recall} that a formula $\varphi$ is satisfiable if has a model and
+unsatisfiable if there is no model of $\varphi$. 
+
+Let $Asgn \mathrel{\hat=} Prop \rightarrow \mathbb{B}$ be the set of
+concrete assignments.  A concrete domain over $Asgn$ is given by
+$(\powerset{(Asgn)},\subseteq,\cup,\cap)$. Properties of $\varphi$ can be
+expressed with the following transformers. A \emph{concrete model transformer} 
+($f_{mod}^\varphi$) over a set of assignments $Z$ removes all countermodels of 
+$\varphi$ from the set $Z$ such that it contains only those assignments that
+satisfy $\varphi$.  Whereas, a \emph{concrete countermodel transformer} ($f_{cmod}^\varphi$) 
+over a set of assignments $Z$ removes all models of $\varphi$ from $Z$ such that
+it contains only those assignments that does not satisfy $\varphi$.
+\[ f_{mod}^\varphi(Z) \mathrel{\hat=} \{\tau \in Z | \tau \models \varphi \}
+\quad  
+f_{cmod}^\varphi(Z) \mathrel{\hat=} \{\tau \in Z | \tau \not\models \varphi \}
+\]
+We define an \emph{universal countermodel transformer}, $f_{ucmod}^\varphi$, 
+over a set of assignments $Z$, that adds all countermodels of $\varphi$ to 
+$Z$. 
+\[
+f_{ucmod}^\varphi(Z) \mathrel{\hat=} \{\tau \in Asgn | \tau \not\models 
+\varphi\; \text{or}\; \tau \in Z\}
+\]
+%
+A fixed-point characterization of satisfiability can be expressed by suitably
+exploiting the algebraic properties of these transformers, $f_{mod}$ and
+$f_{cmod}$.  The concrete model and countermodel transformers has the following 
+properties. 
+\begin{enumerate}
+  \item $f_{mod}^\varphi$ and $f_{cmod}^\varphi$ are idempotent.   
+  \item $f_{mod}^\varphi(Asgn)$ is the set of models of $\varphi$ 
+    and $f_{cmod}^\varphi(Asgn)$ is the set of countermodels of $\varphi$.
+  \item There exists galois connection as shown below.
+    \[ \powerset{(Asgn)} \galois{f_{mod}^\varphi}{f_{cmod}^\varphi}
+    \powerset{(Asgn)} \]
+\end{enumerate}
+
+\begin{theorem}
+  A formula $\varphi$ is unsatisfiable iff $f_{mod}^\varphi(Asgn)$ is empty 
+  and $f_{cmod}^\varphi(Asgn)$ contains set of all assignments. 
+\end{theorem}
+
+\begin{theorem}
+  A formula $\varphi$ is unsatisfiable iff greatest fixed-point of
+  $f_{mod}^\varphi$, that is $gfp(f_{mod}^\varphi)$, is empty.
+\end{theorem}
+
+\subsection{Abstract Interpretation of Satisfiability}
+%
+Given a concrete domain of assignments, $(\powerset{(Asgn)},\subseteq,\cup,\cap)$, let 
+$(O,\sqsubseteq,\sqcup,\sqcap)$ and $(U,\preceq,\sqcup,\sqcap)$ be an
+overapproximation and underapproximation of the domain of assignments
+respectively. The subset ordering $\subseteq$ of assignments are refined 
+such that $a \sqsubseteq b$ implies $\gamma(a) \subseteq \gamma(b)$ and 
+$p \preceq q$ implies $\gamma(p) \subseteq \gamma(q)$.  The galois connection
+between the concrete domain of assignments and the approximating domains, $O$
+and $U$ are given by 
+\[  
+    (\powerset{(Asgn)},\subseteq,\cup,\cap)
+    \galois{\alpha_O}{\gamma_O}
+    (O,\sqsubseteq,\sqcup,\sqcap)
+\]
+\rmcmt{
+\[  
+    (\powerset{(Asgn)},\supseteq,\cup,\cap) \galois{\alpha_U}{\gamma_U}
+    (U,\succeq,\sqcup,\sqcap)
+\]
+}
+%
+We now define the abstract transformers over the domain $(O, \sqsubseteq)$ and
+$(U, \preceq)$ that soundly approximates the concrete transformers, 
+$f_{mod}^\varphi$ and $f_{cmod}^\varphi$.  Let $f_{aomod}^\varphi : O \rightarrow O$ 
+be an abstract over-approximation of $f_{mod}^\varphi$ and $f_{aucmod}^\varphi :
+U\rightarrow U$ be an abstarct under-approximation of concrete countermodel transformer 
+$f_{cmod}^\varphi$. The abstract transformers satisfy the following constraints. 
+\[
+f_{mod}^\varphi \circ \gamma_O  \subseteq \gamma_O \circ f_{aomod}^\varphi
+\qquad 
+f_{cmod}^\varphi \circ \gamma_U  \supseteq \gamma_U \circ f_{aucmod}^\varphi
+\]
+%
+\begin{theorem}
+  A formula $\varphi$ is unsatisfiable iff $\gamma_O(gfp(f_{aomod}^\varphi))$ is empty 
+\end{theorem}
+\begin{proof}
+  Theorem \rmcmt{number theorem} follows from the soundness proof of Abstract
+  Interpretation. 
+\end{proof}
+%
+\subsection{SAT solvers works on Partial Assignments Domain}
+Given a CNF formula $\varphi$, a \emph{partial assignment} $\pi$ is 
+a truth assignment to a subset of variables of $\varphi$, that is a 
+partial function in $Prop \rightarrow \mathbb{B}$. We use 
+$\modformula{\varphi}{\pi}$ to denote a \emph{simplified formula} 
+that is obtained by replacing variables in $\pi$ with their respective
+values in $\varphi$, removing all satisfiable clauses (clauses with at least 
+one true literal) and deleting all false literals from remaining clauses.
+%
+\begin{example}
+  Consider a CNF formula $\varphi = (\neg p \vee q) \wedge (p \vee \neg q)  
+  \wedge (p \vee r)$ and a partial assignment $\pi=\{p:f,q:t\}$.  Clearly,
+  $\varphi$ is not satisfied since $(p \vee \neg q)$ evaluates to \emph{false} 
+  even without assignment to variable $r$. The partial assignment cannot be
+  extended further since every extension of $\pi$ would evaluate to
+  \emph{false} due to unsatisfiability of the clause $(p \vee \neg q)$. This
+  leads to a \emph{conflict} state, denoted by $\bot$.  
+\end{example}
+%
+We model partial assignments as a total function, 
+$\pi: Prop \rightarrow \{t,f,\top\}$ over partial assignments domain $PAsgn$, 
+where for each variable $p$, $\pi(p) = \top$ if $\pi$ is undefined on $p$. 
+The \emph{partial assignments domain} is given by, 
+$PAsgn \mathrel{\hat=} (Prop \rightarrow \{t,f,\top\}) \cup \{\bot\}$. 
+The set $PAsgn$ contains a special element $\bot$ that denotes \emph{conflict}. 
+%The \emph{partial assignments domain} is given by $(PAsgn,\sqsubseteq)$ where 
+The ordering of elements in $(PAsgn, \sqsubseteq)$
+is $t \sqsubseteq \top$ and $f \sqsubseteq \top$ with the empty set denoted by
+$\bot$. Figure~\ref{fig:pasgn} presents a partial assignments domain over two 
+variables, $p$ and $q$.  The element $(p:t)$ in $PAsgn$ denotes a partial 
+assignment in which $p$ is \emph{true} and the remaining variables are mapped 
+to $\top$. 
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.90}{\import{chapter5/figures/}{bool_lattice.pspdftex}}
+\caption{Partial Assignments Domain over two variables \label{fig:pasgn}}
+\end{figure}
+%
+\rmcmt{concrete boolean domain}
+The galois connection between the concrete domain of assignments $Asgn$ and 
+the over-approximating partial assignments domain, $PAsgn$ is given by 
+\[  
+    (\powerset{(Asgn)},\subseteq,\cup,\cap)
+    \galois{\alpha_{PAsgn}}{\gamma_{PAsgn}}
+    (PAsgn,\sqsubseteq,\sqcup,\sqcap)
+\]
+%
+The abstraction function, $\alpha_{PAsgn}$, and concretisation function,
+$\gamma_{PAsgn}$ are defined by,
+\begin{equation*}
+  \alpha_{PAsgn}(\emptyset) \mathrel{\hat=} \bot
+  \quad 
+  \alpha_{PAsgn}(C) \mathrel{\hat=} \{ p \mapsto \bigsqcup \{\pi(p) \mid \pi \in
+  C\; \text{and}\; p \in Prop\} \} 
+\end{equation*}
+
+\begin{equation*}
+  \gamma_{PAsgn}(\bot) \mathrel{\hat=} \emptyset
+  \quad 
+  \gamma_{PAsgn}(\pi) \mathrel{\hat=} \{ \tau \in Asgn \mid \tau(p) \sqsubseteq
+  \pi(p), \forall p \in Prop \} 
+\end{equation*}
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.90}{\import{chapter5/figures/}{cdcl.pspdftex}}
+\caption{Architecture of CDCL solver \label{fig:cdcl}}
+\end{figure}
+\section{Model Search in Propositional Solver}
+Model Search in CDCL solver alternates between the Boolean Constraint
+Propagation (BCP) phase and the decision phase until a satisfying assignment is
+found or a conflict is derived.  In the former case, the solver terminates with
+the satisfying assignment, while in the later case the CDCL solver enters into
+conflict analysis phase.  Figure~\ref{fig:cdcl} shows the high-level
+architectural view of CDCL solver.  Below we describe the abstract interpretation 
+account of BCP and decision.
+%
+\subsection{Boolean Constraint Propagation}
+%
+A \emph{unit clause rule} is a key component in a SAT solver. The unit rule
+states that if all but one literals in a clause are false, then the remaining 
+unassigned literal must be assigned \emph{true} value.  Boolean constraint
+propagation is the repeated application of the unit rule.  Thus, unit rule helps
+to derive logical consequences of a formula and is applied after every branching
+step (that is decision).  The unit rule $(Unit)$ for a clause $c$ under partial
+assignment $\pi$ is expressed by the function, $Unit \colon c \times PAsgn \rightarrow PAsgn$, 
+and is given by Equation~\ref{eq:unit}.
+%
+\begin{equation}\label{eq:unit}
+  Unit(c, \pi) = \left\{\begin{array}{lr}
+    \bot, & \text{if } \pi(c)=f \\
+    \pi \cup \{l \mapsto t\}, & \text{if } c=\theta \vee l\; \text{and }
+    \pi(\theta)=f \\ 
+    \pi \cup \{l \mapsto f\}, & \text{if } c=\theta \vee \neg l\; \text{and }
+    \pi(\theta)=f \\ 
+    \pi, & \text{otherwise}
+\end{array}\right\}
+\end{equation}
+%
+Algorithm~\ref{Alg:bcp} presents the boolean constraint propagation. Given a 
+formula $\varphi$ and partial assignment $\pi$, the BCP procedure is a function
+given by $bcp \colon \varphi \times PAsgn \rightarrow PAsgn$. 
+%
+\begin{algorithm2e}[t]
+\DontPrintSemicolon
+\SetKw{return}{return}
+\SetKw{continue}{continue}
+\SetKwRepeat{Do}{do}{while}
+\SetKwData{conflict}{conflict}
+\SetKwData{safe}{safe}
+\SetKwData{sat}{sat}
+\SetKwData{unsafe}{unsafe}
+\SetKwData{unknown}{unknown}
+\SetKwData{true}{true}
+\SetKwInOut{Input}{input}
+\SetKwInOut{Output}{output}
+\SetKwFor{Loop}{Loop}{}{}
+\SetKw{KwNot}{not}
+\begin{small}
+  \Input{A propositional formula $\varphi$ in CNF and a partial assignment $\pi$} 
+  \Output{Partial assignment $\pi'$}
+  \Do {$\pi' \neq \pi$} {
+    $\pi' \leftarrow \pi$ \;
+    \ForEach{$Clause\; c\; \in \varphi$} {
+      $\pi' \leftarrow Unit(c,\pi)$ \; 
+    }
+  }
+  \return $\pi'$ \;
+\end{small}
+\caption{Boolean Constraint Propagation $bcp(\varphi, \pi)$
+  \label{Alg:bcp}}
+\end{algorithm2e}
+%
+\begin{example}
+  \textbf{Application of Unit Rule} 
+  Consider a clause $c=l_1 \vee \neg l_2 \vee \neg l_3$ and a partial assignment
+  $\pi=\{l_1:f,l_3:t\}$. Clearly, the clause $c$ is \em{unit}.  The application
+  of Unit rule $Unit(c, \pi)$ yields a partial assignment, $\pi'=\{l_1:f,l_2:f,l_3:t\}$. 
+\end{example}
+%
+\begin{example}
+  \textbf{GFP computation with BCP} 
+  Consider a CNF formula $\varphi = p \wedge (\neg p \vee q) \wedge (q \vee \neg
+  r) \wedge (r \vee \neg s)$ and a partial assignment $\pi_0=\{\top\}$. Staring
+  from an empty partial assignment $\top$, we repeatedly apply unit rule to
+  improve the precision of the deduction. 
+\end{example}
+  $\begin{array}{l@{}c@{}l}
+    Unit(\varphi, \top) &=& Unit(p, \top) \sqcap Unit((\neg p \vee q), \top)
+  \sqcap Unit((q \vee \neg r), \top) \sqcap Unit((r \vee \neg s), \top) \\
+   &=& \{p:t\} = \pi_1 \\ \\
+    
+    Unit(\varphi, \pi_1) &=& Unit(p, \pi_1) \sqcap Unit((\neg p \vee q),
+    \pi_1) \sqcap Unit((q \vee \neg r), \pi_1) \sqcap Unit((r \vee \neg s),
+    \pi_1) \\
+    &=& \{p:t, q:t \}  = \pi_2 \\ \\ 
+    
+    Unit(\varphi, \pi_2) &=& Unit(p, \pi_2) \sqcap Unit((\neg p \vee q),
+    \pi_2) \sqcap Unit((q \vee \neg r), \pi_2) \sqcap Unit((r \vee \neg s),
+    \pi_2) \\
+    &=& \{p:t, q:t, r:f \}  = \pi_3 \\ \\ 
+
+    Unit(\varphi, \pi_3) &=& Unit(p, \pi_3) \sqcap Unit((\neg p \vee q),
+    \pi_3) \sqcap Unit((q \vee \neg r), \pi_3) \sqcap Unit((r \vee \neg s),
+    \pi_3) \\
+    &=& \{p:t, q:t, r:f, s:f \}  = \pi_4 \\ \\ 
+  \end{array}$
+
+  The application of boolean constraint propagation to $\varphi$, $bcp(\varphi,\pi)$
+  yields the following sequence of deductions, which computes greatest
+  fixed-point in the partial assignments domain. 
+  \[\pi_1=\{p:t\} \qquad \pi_2=\{p:t,q:t\} \] 
+  \[
+  \pi_3=\{p:t,q:t,r:f\} \qquad \pi_4=\{p:t,q:t,r:f,s:f\}
+  \]
+  All clauses in $\varphi$ is satisfiable at this point. Hence, BCP terminates
+  with the satisfying assignment $\pi_4=\{p:t,q:t,r:f,s:f\}$. Note that the
+  initial partial assignment $\pi_0$ in BCP need not begin with a $\top$ but 
+  may contain any elements of partial assignments domain, for example,
+  $pi_0=\{p:t\}$.
+
+\begin{example}
+  \textbf{BCP is Incomplete} 
+  Consider a variant of above CNF formula $\varphi = p \wedge (\neg p \vee q) \wedge (q \vee \neg
+  r) \wedge (r \vee \neg s \vee t)$ and a partial assignment $\pi=\{\top\}$. The
+  application of boolean constraint propagation to $\varphi$, $bcp(\varphi,\pi)$
+  yields the following sequence of deductions.
+\end{example}
+  \[\pi_0=\{\top\} \quad \pi_1=\{p:t\} \quad \pi_2=\{p:t,q:t\} \quad
+  \pi_3=\{p:t,q:t,r:f\} 
+  \]
+  The remaining clause $(r \vee \neg s \vee t)$ have literals $s$ and $t$
+  unassigned. So, BCP stops with the partial assignment $\pi_3=\{p:t,q:t,r:f\}$.
+  Hence, BCP is sound but incomplete deduction procedure. 
+
+\begin{example}
+  \textbf{BCP leads to Conflict} 
+  Consider a partial assignment, $\pi=\{p:t,q:t,s:t\}$, and the CNF formula 
+  $\varphi = p \wedge (\neg p \vee q) \wedge (\neg q \vee \neg r) \wedge (r \vee \neg s)$, 
+  $bcp(\varphi,\pi)$ infers $r:f$ from the clause $(\neg q \vee \neg r)$ and
+  $r:t$ from the clause $(r \vee \neg s)$.  This leads to a conflict, denoted by
+  $\bot$. Hence, $\pi$ can not be extended further to satisfy $\varphi$. 
+\end{example}
+%
+Recall that the concrete model transformer is given by the function, 
+$f_{mod}^\varphi \colon \powerset{(Asgn)} \rightarrow \powerset{(Asgn)}$.  
+We denote the concrete model transformer under partial assignment $\pi$ by
+$f_{mod,\pi}^\varphi : PAsgn \times \powerset{(Asgn)} \rightarrow
+\powerset{(Asgn)}$ such that $f_{mod,\pi}^\varphi(p) = f_{mod}^\varphi(p \cap \gamma(\pi))$.
+
+The \emph{abstract deduction transformer}, $ded_{\varphi,\pi} \colon PAsgn
+\times PAsgn \rightarrow PAsgn $ soundly over-approximates the concrete model transformer 
+$f_{mod, \pi}^\varphi$, such that $f_{mod, \pi}^\varphi \circ \gamma_{PAsgn}
+\subseteq \gamma_{PAsgn} \circ ded_{\varphi,\pi}$. That is, all solutions of
+$ded_{\varphi,\pi}$ is satisfied by the models of $\varphi$. Assuming that
+$f_{aomod}^c$ is the best abstract transformer of $f_{mod}^c$ for a clause $c
+\in \varphi$, the abstract deduction transformer, $ded_{\varphi,\pi}$ is defined below.
+\[
+  ded_{\varphi,\pi}(p) \mathrel{\hat=} \bigsqcap \{f_{aomod}^c(p \sqcap \pi)
+  \mid c \in \varphi\}
+\]
+
+The following abstract interpretation characterisations of unit rule and BCP 
+procedure is shown in~\cite{leo-thesis}.
+%
+\begin{enumerate}
+  \item Unit rule is the best abstract transformer for a clause $c$ and
+    a partial assignment $\pi \in PAsgn$, $Unit(c, \pi) = \alpha_{PAsgn} \circ
+    f_{mod}^c \circ \gamma_{PAsgn}(\pi)$
+  \item The result of BCP is equivalent to the greatest fixed point of the 
+    abstract deduction transformer, $gfp(ded_{\varphi,\pi})$.
+\end{enumerate}
+%
+\subsection{Decision}
+%
+Decisions underapproximate the result of $gfp(ded_{\varphi,\top})$. In lattice
+theoretic terms, a decision is a downward extrapolation function on a lattice 
+of partial assignments, that is, $ext \downharpoonright \colon PASgn \rightarrow 
+PAsgn$.  Decision can be seen as a mechanism to increase the precision of the analysis by
+iterating below $gfp(ded_{\varphi,\top})$. A widening operator is used to move
+upwards in the lattice in a least fixed point computation to achieve
+convergence. Hence, decision in CDCL solver is dual widening without any
+requirement on convergence.  The decision step is formalized below. 
+\[
+  ext \downharpoonright (\pi) \mathrel{\hat=} \pi \sqcap \{x:v\}, \text{where x
+  is a decision variable and}\; v \in \mathbb{B}
+\]
+%
+\section{Conflict Analysis}
+CDCL solver records the deductions and decisions during model search in an
+implication graph. Conflict analysis in CDCL solver aims to find a cut of the
+implication graph that represents a sufficient \emph{reason} for a conflict. A cut
+in the implication graph is a conjunction of literals.  Hence, a cut can be
+represented by a partial assignment, $\pi$.  There can be multiple incomparable
+reasons for a conflict. Hence, there can be set of cuts which represent set of
+partial assignments. The disjunction of set of cuts is a sufficient reason
+for conflict. For effeciency reason, a CDCL solver heuristically choose a single 
+cut as the reason for conflict~\cite{cdcl}.  Thus, conflict analysis involves two steps -- 
+1) heuristically choose a cut, and 2) generalize the cut.
+
+A reason for a partial assignment $\pi$ is an element $\pi'$ such that
+$f_{mod}^\varphi \circ \gamma_{PAsgn}(\pi') \subseteq \gamma_{PAsgn}(\pi)$.
+Conflict analysis finds a reason for a conflict element $\bot$. 
+In lattice theoretic terms, a conflict analysis is performed when 
+$gfp(ded_{\varphi,\top}) = \bot$. Recall that the universal countermodel
+transformer, $f_{ucmod}^\varphi(X)$ adds all countermodels of $\varphi$ to 
+$X$. Conflict analysis can be seen as underapproximating the set of
+countermodels computed by $f_{ucmod}^\varphi$ through underapproximating 
+domain and underapproximating transformer.
+
+Starting from an initial conflict reason represented by the partial assignment
+$\pi_{cut0}$, let $\{cut0\}$ denote the set of vertices representing
+$\pi_{cut0}$ in the implication graph.  Let $\{cut1\}$ denote a set of vertices 
+in the implication graph and if $\{cut0\}$ is contained in $\{cut1\}$, then the
+ordering of corresponding partial assignments satisfy $\pi_{cut1} \sqsubseteq
+\pi_{cut0}$.  Conflict analysis operates on the downward closed sets 
+(downsets) of partial assignments, $(\mathcal{D}(PAsgn), \subseteq)$. 
+Note that the downset lattice is also called the \emph{disjunctive completion} of 
+an abstract domain. 
+The lattice $(\mathcal{D}(PAsgn))$ is an under-approximating abstract domain
+which underapproximates the concrete domain of assignments.  The abstraction and
+concretisation functions of $(\mathcal{D}(PAsgn))$ are defined below. 
+\begin{equation*}
+  \alpha_{\mathcal{D}(PAsgn)}(Z) \mathrel{\hat=} \bigcup \{\pi \mid 
+  \gamma_{PAsgn}(\pi) \subseteq Z \}
+\end{equation*}
+%
+\begin{equation*}
+  \gamma_{\mathcal{D}(PAsgn)}(Z) \mathrel{\hat=} \{ 
+  \gamma_{PAsgn}(\pi) \mid \pi \in Z \}
+\end{equation*}
+%
+Recall that the universal countermodel transformer is given by the function, 
+$f_{ucmod}^\varphi \colon \powerset{(Asgn)} \rightarrow \powerset{(Asgn)}$.  
+We denote the universal countermodel transformer under partial assignment $\pi$ by
+$f_{ucmod,\pi}^\varphi : PAsgn \times \powerset{(Asgn)} \rightarrow
+\powerset{(Asgn)}$ such that $f_{ucmod,\pi}^\varphi(p) = f_{ucmod}^\varphi(p
+\cup \gamma_{PAsgn}(\pi))$.
+
+The \emph{abstract abduction transformer}, $abd_{\varphi,\pi} \colon PAsgn
+\times \mathcal{D}(PAsgn) \rightarrow \mathcal{D}(PAsgn) $ soundly 
+under-approximates the universal countermodel transformer 
+$f_{ucmod, \pi}^\varphi$, such that 
+$\gamma_{\mathcal{D}(PAsgn)} \circ abd_{\varphi,\pi} \subseteq 
+f_{ucmod, \pi}^\varphi \circ \gamma_{\mathcal{D}(PAsgn)}$.
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.90}{\import{chapter5/figures/}{conflict_cut.pspdftex}}
+\caption{Generalizing Conflict Reason \label{conflict}}
+\end{figure}
+%
+
+Conflict analysis in CDCL solver heuristically choose a single partial
+assignment among the set of conflict reasons due to effeciency purpose.
+The heuristic choice can be seen as upwards interpolation functon, 
+$int \upharpoonright \colon \mathcal{D}(PAsgn) \times \mathcal{D}(PAsgn)
+\rightarrow \mathcal{D}(PAsgn)$. An upward interpolation for partial 
+assignments $\pi$ and $\pi'$ where $\pi \sqsubseteq \pi'$ is described below. 
+Note that the term \emph{interpolation} have different meaning than \emph{craig
+interpolants.}
+\[
+  int \upharpoonright (\pi, \pi') \mathrel{\hat=} \{\pi^\dagger \mid \pi
+ \sqsubseteq \pi^\dagger \sqsubseteq \pi'\}
+\]
+\begin{example}
+Figure~\ref{conflict} shows the conflict analysis in CDCL solver. The initial
+  conflict is $\pi = \{p:t,q:t,r:f,s:f\}$. A CDCL solver heuristically picks a single 
+  conflict reason as shown in the right of Figure~\ref{conflict}. The graph cuts 
+  over the intial conflict reason produce the candidate partial assignment set, 
+  $\pi' = \{(p:t,q:t)(r:f,s:f)\}$. The heuristic choice is an upwards interpolation, 
+  $int \upharpoonright (\pi, \pi') = \{(p:t,q:t)\}$.
+\end{example}
+\rmcmt{write about mimisation transformer in defferent sense}
+%
+Figure~\ref{fig:acdcl} shows the abstract interpretation account of CDCL
+algorithm.  The work of~\cite{leo-thesis} shows that the building blocks 
+of a CDCL based SAT solver can be understood in terms of lattice structures, 
+transformers and fixed point iteration. An objective behind this unification is 
+to achieve an uniform theoretical and practical treatment of the SAT/SMT solving 
+and static analysis using lattice theoretic techniques.  The expectation is that
+this will contribute to the development of new class of solvers and program
+analyser technologies that are easy to develop and have improved performance. 
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.90}{\import{chapter5/figures/}{acdcl.pspdftex}}
+\caption{Abstract Interpretation Characterisation of CDCL \label{fig:acdcl}}
+\end{figure}
+

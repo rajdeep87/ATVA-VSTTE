@@ -1,0 +1,174 @@
+\section{Solver Architectures}
+%
+We first discuss various architectures of DPLL based satisfiability solvers and then 
+concentrate on extending CDCL solver to richer logics.  From architectural standpoint, 
+the following classification of DPLL family of solvers gives a clear overview 
+of the various similarities and differences between them.  
+
+\para{CDCL}
+Figure~\ref{cdcl} gives the architecture of CDCL solver~\cite{cdcl}, which 
+has two key components -- \emph{model search} and \emph{conflict analysis}.  
+%
+\begin{figure}
+\centering
+\scalebox{.65}{\import{figures/}{cdcl.pspdftex}}
+  \caption{Architecture of CDCL \label{cdcl}}
+\end{figure} 
+%
+%
+\begin{figure}
+\centering
+\scalebox{.65}{\import{figures/}{dpll.pspdftex}}
+  \caption{Architecture of Classical DPLL(T) \label{dpll}}
+\end{figure} 
+%
+\begin{figure}
+\centering
+\scalebox{.65}{\import{figures/}{natural_domain_smt.pspdftex}}
+  \caption{Architecture of Natural Domain SMT Solver \label{natural-domain-smt}}
+\end{figure} 
+%
+\begin{figure}
+\centering
+\scalebox{.65}{\import{figures/}{natural_domain_smt.pspdftex}}
+  \caption{\rmcmt{Architecture of Model Constructing Satisfiability Calculus} \label{mcsat}}
+\end{figure} 
+%
+%%%%%%%%%%%%%%%%%%%% DPLL(T) %%%%%%%%%%%%%%%%%%%%%%%%%%
+\para{DPLL(T)}
+Figure~\ref{dpll} gives the architecture of DPLL(T) solver~\cite{cdcl,smt1,smt2}, also 
+called \emph{Lazy SMT}.  
+DPLL(T) uses CDCL solver as a black box which is used to enumerate the 
+assignments of the boolean abstraction of the formula. The candidate boolean 
+assignment is then checked with a solver for conjunctive fragment of theory to 
+check satisfiability of quantifier-free formula in a theory.  Thus, decisions and 
+learning in DPLL(T) is delegated to the propositional CDCL solver which is used to 
+enumerate theory facts.  Whereas, the theory solver adds blocking clauses in terms of 
+the existing atoms that represent partial assingment infeasible in the theory.   The 
+work of~\cite{} introduced \emph{Splitting on demand} 
+which encodes new theory facts as propositional variable and adds to a formula.  
+
+There are various first-order 
+theories such as arithmetic, bit-vector, arrays, uninterpreted functions, and datatypes.  
+One of the benefits of the DPLL(T) architecture is that it is directly impacted by any 
+advances and performance improvements of the CDCL SAT solver.    
+
+
+%
+%%%%%%%%%%%%%%%%%%%% Natural Domain SMT %%%%%%%%%%%%%%%%%%%%%%%%%%
+\para{Natural Domain SMT}
+Figure~\ref{natural-domain-smt} gives the architecture of natural domain 
+SMT solver, proposed by Cotton et al., that integrates the theory solvers 
+inside the CDCL procedure with techniques such as theory propagation and theory learning.  
+The unification of the theory solver and CDCL search into a common architecture 
+enables direct search of the model of formula over the natural domain of variables. 
+This lead to the development of new solver procedures that performs direct model 
+construction complemented with conflict resolution in some restricted first-order 
+domains such as floating-point~\cite{DBLP:journals/fmsd/BrainDGHK14}, linear real
+arithmetic~\cite{ndsmt,linear-real}, linear integer arithmetic~\cite{linear-int}, 
+nonlinear arithmetic~\cite{nonlinear}.
+
+%%%%%%%%%%%%%%%%%%%% Generalized DPLL %%%%%%%%%%%%%%%%%%%%%%%%%%
+\para{Generalised DPLL}
+McMillan et al.~\cite{DBLP:conf/cav/McMillanKS09} presented a Generalised DPLL 
+procedure called \emph{GDPLL} which performs decisions and learning directly 
+in theory.  A key difference between lazy SMT and GDPLL is that the theory 
+deductions in GDPLL only occurs in response to a conflict in model search in contrast 
+to lazy SMT which restricts theory deductions only in response to satisfying 
+partial assignments.  Additionally, GDPLL allows theory learning in contrast to lazy SMT 
+approach which cannot learn theory facts.  Similar theory-specific approaches are presented for 
+equality~\cite{DBLP:journals/iandc/BadbanPTZ07} and integer linear 
+arithmetic~\cite{DBLP:conf/cade/JovanovicM11}.
+
+
+%%%%%%%%%%%%%%%%%%%% MCSAT %%%%%%%%%%%%%%%%%%%%%%%%%%
+\para{Model Constructing Satisfiability Calculus}
+While natural domain SMT procedures are quite effective in their respective
+first-order theories, they have limitations in pure boolean reasoning and
+are not compatible with DPLL(T) procedures.  A \emph{model-constructing 
+satisfiability calculus} (mcSAT)~\cite{mcsat1,mcsat2} extends DPLL(T) 
+procedure through \emph{model assignment} which allows decisions on theory variables.  
+Furthermore, it allows propagations and learning in terms of theory variables 
+that are not present in the given formula.
+
+\begin{example}~\label{mcsatex}
+%
+Let us illustrate mcSAT procedure through a simple example. Consider a formula 
+$\phi = (x \geq 5) \wedge (\neg (x \geq 2) \vee y \geq 2) \wedge (x^2 + y^2 \leq 2 \vee xy > 2)$.  
+Let clause $C1 = (x \geq 5)$, $C2 = (\neg (x \geq 2) \vee y \geq 2)$ and 
+$C3 = (x^2 + y^2 \leq 2 \vee xy > 2)$.  The procedure performs obvious deductions initially 
+that sets $C1$ to \emph{true}, that is, $(x \geq 5)$ is deduced.  This infers $x \geq 2$ 
+in $C2$ which implies $y \geq 2$ in $C2$.  The current partial assignment 
+is extended by a decision which sets $x^2 + y^2 \leq 2$ to \emph{true} and performs a 
+\emph{model assignment}, $x \rightarrow 5$.  Decisions in mcSAT constitute a truth 
+assignment to decided literal as well as concrete assignments to first-order uninterpreted 
+symbol.  The later is a model assignment.  The trail after decision is shown in figure~\ref{dec}.
+Clearly, the decision leads to a conflict since the trail element $x^2 + y^2  \leq 2$ is 
+unsatisfiable under the current model assignment.  The procedure investigates the 
+reason for the conflict and learns a generalized clause, 
+$C4 = \neg (x^2 + y^2 \leq 2) \vee (x \leq 1)$.  An alternative but not so productive 
+learned clause could be $\neg(x^2 + y^2 \leq 2) \vee \neg(x \rightarrow 5)$.  
+The contents of the trail at this point are $\{x \geq 5, x \geq 2, y \geq 2, x^2+y^2 \leq 2 \}$.  Clause 
+$C4$ infers a new element, $x \leq 1$ which contradicts with the trail element $x \geq 5$.  
+Conflict resolution between clauses $C4 =  \neg (x^2 + y^2 \leq 2) \vee (x \leq 1)$ and 
+$\neg (x \geq 5) \vee \neg (x \leq 1)$ yields a learned clause $C5 = \neg(x \geq 5) \vee \neg(x^2 + y^2 \leq 2)$.  
+The contents of the trail after conflict analysis are $\{x \geq 5, x \geq 2, y \geq 2 \}$. Clause $C5$ infers a 
+new element, $\neg (x^2 + y^2 \leq 2)$ which is added to the trail.  The trail obtained 
+through propagation after learning is shown in figure~\ref{mcfinal}.  The final content of 
+the trail is $\{x \geq 5, x \geq 2, y \geq 2, \neg(x^2 + y^2 \leq 2) \}$ which satisfies 
+all clauses.  Hence, the satisfying solution is $\{x=5, y=2\}$.
+\end{example}
+%
+\begin{figure}
+\centering
+\scalebox{.70}{\import{figures/}{trail_mc.pspdftex}}
+  \caption{Content of trail after decision for example~\ref{mcsatex} \label{dec}}
+\end{figure} 
+%
+%
+\begin{figure}
+\centering
+\scalebox{.70}{\import{figures/}{trail_mc_final.pspdftex}}
+  \caption{Content of trail after learning for example~\ref{mcsatex} \label{mcfinal}}
+\end{figure} 
+%
+
+\para{ACDLP versus DPLL/CDCL-based solvers}
+%
+There are few fundamental differences between ACDLP and solver procedures discussed above. 
+ACDLP is different from DPLL(T) procedure in that it does not require a propositional solver and 
+the reasoning happens directly in an abstract domain which corresponds to a fragment of theory.  
+ACDLP is also different from GDPLL.  This can be explained with an example borrowed from
+~\cite{DBLP:conf/cav/McMillanKS09}.  Consider the formula, 
+$\phi = (a < b) \wedge (a < c) \wedge (b < d \vee c < d) \wedge (d < a)$, where $a,b,c,d$ are integers.  
+GDPLL determines that $\phi$ is unsatisfiable using decisions and shadow rule for conflict analysis.  
+Whereas, ACDLP do not need to make any decision and can prove unsatisfiability through deductions 
+in the abstract domain of Inequality.  An Inequality abstract domain contains only conjunctions of 
+inequalities. The abstract value computed through evaluating each clause in the Inequality abstract 
+domain is given by $\pi = \{a < b, a < c, d < a\}$.  The greatest fixed point iteration for $\phi$ under
+$\pi$ is computed by first applying best abstract transformer for each singleton clause, which gives 
+$\pi'= \pi \cup \{ d < b, d < c \}$.  Now, the clause $(b < d \vee c < d)$ is unsatisfiable under 
+$\pi'$.  Hence $\phi$ is unsatisfiable. 
+
+
+Whereas, one of the fundamental differences between ACDLP and mcSAT is that decisions in mcSAT 
+are restricted to concrete model assignments to theory variables and boolean assignments to 
+theory atoms in the formula.  Whereas, decisions in ACDLP can be made over set of all meet 
+irreducibles representable by the underlying abstract domains.
+
+
+
+Another key difference between ACDLP and the solver procedures discussed above is that 
+ACDLP directly operates over SSA representation of a program whereas a DPLL(T) based solver 
+operates on a formula which is a conjunction of sentences in a given logic where a sentence 
+(or clause) is a disjunction of theory atoms. This formula is usually specified in 
+SMT-LIB2~\cite{smt-lib2} language.  For example, a sentence in the logic formula of 
+quatifier-free linear rational arithmetic (QFLRA) is of the form 
+$c_1x_1 + c_2x_2 + \ldots + c_nx_n \diamond c_0$, where $c_i$ is a rational constant 
+and $x_i$ is a rational variable, and $\diamond$ is either $\geq$ or $>$.  A model of 
+QFLRA is an assignment of rational values to variables $x_i$ such that it satisfies 
+every clause of the formula.  \rmcmt{In contrast, an SSA may not be exactly represented 
+in a clausal form.  Recall from section~\cite{ssa-cite}, elements of SSA are obtained directly 
+from program statements through syntactic translation steps.  Hence, a clause in SSA 
+representation constitute an equality or inequality (obtained from assignment statements 
+or an assertion) or disjunctions (obtained from control-flow branches).} 

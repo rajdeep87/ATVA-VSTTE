@@ -1,0 +1,44 @@
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[scale=1]
+
+\pgfplotscreateplotcyclelist{markstyles}{%
+solid, every mark/.append style={solid, fill=white}, mark=square*, mark size=1.5\\%
+solid, every mark/.append style={solid, blue}, mark=triangle*,mark size=1.5\\%
+solid, every mark/.append style={solid, fill=black}, mark=otimes*, mark size=1.5\\%
+}
+    
+ 	%axis
+  \begin{axis}[
+    width=\linewidth, height=4.5cm,
+    xlabel={Benchmark Number},
+    ylabel={Time (seconds)},
+    domain = 1:85,
+    xmin=1, xmax=85,
+    ymin=0, ymax=200,
+    %ytick={0,20,...,200},
+    xtick={1,5,10,...,85},
+    ymode = log,
+    %log basis x={2},
+    %xticklabel=\pgfmathparse{2^\tick}\pgfmathprintnumber{\pgfmathresult},
+    legend pos = south east,
+    grid = major,
+    major grid style={line width=.2pt,draw=gray!50},
+    cycle list name=markstyles
+  ]
+	
+  %plots
+    \addplot table [only marks, y=Time, x=Benchmarks]{plotdata/cbmc.dat};
+	\addlegendentry{CBMC}
+  
+  \addplot table [only marks, y=Time, x=Benchmarks]{plotdata/acdlp.dat};
+  \addlegendentry{ACDLP}
+  
+  \addplot table [only marks, y=Time, x=Benchmarks]{plotdata/astree.dat};
+    \addlegendentry{Astr{\'e}e}
+	
+  \end{axis}  
+\end{tikzpicture}
+\caption{\label{fig:runtimes}
+  Runtime comparison between CBMC, Astr{\'e}e and ACDLP}
+\end{figure}

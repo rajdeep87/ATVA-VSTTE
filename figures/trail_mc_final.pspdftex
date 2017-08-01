@@ -1,0 +1,33 @@
+\begin{picture}(0,0)%
+\includegraphics{trail_mc_final_pspdftex}%
+\end{picture}%
+\setlength{\unitlength}{4144sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(4932,2826)(1291,-4684)
+\put(3781,-4606){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$C4 = \neg(x^2 + y^2 \leq 2) \vee x \leq 1$}%
+}}}}
+\put(1306,-2041){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi = (x \geq 5) \wedge (\neg(x \geq 2) \vee y \geq 2) \wedge (x^2 + y^2 \leq 2 \vee xy > 2)$}%
+}}}}
+\put(1846,-3481){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$x \geq 5$}%
+}}}}
+\put(2926,-3481){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$x \geq 2$}%
+}}}}
+\put(1486,-2491){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$C1 = (x \geq 5)$}%
+}}}}
+\put(3151,-2491){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$C2 = (\neg(x \geq 2) \vee y \geq 2)$}%
+}}}}
+\put(4006,-3481){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$y \geq 2$}%
+}}}}
+\put(4906,-3481){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\bfdefault}{\updefault}{\color[rgb]{0,0,0}$\neg(x^2 + y^2 \leq 2)$}%
+}}}}
+\put(5356,-2491){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$C3 = (x^2 + y^2 \leq 2 \vee xy > 2)$}%
+}}}}
+\put(3781,-4336){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$C5 = \neg(x^2 + y^2 \leq 2) \vee \neg(x \geq 5)$}%
+}}}}
+\end{picture}%

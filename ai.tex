@@ -1,0 +1,100 @@
+\section{An Example of Abstract Interpretation}
+%
+\begin{figure}[t]
+\centering
+\begin{tabular}{c|c}
+\hline
+Control-Flow Graph & Static Analysis Equation \\
+\hline
+\begin{minipage}{5.0cm}
+\scalebox{.65}{\import{figures/}{ai-example.pspdftex}}
+\end{minipage}
+&
+\begin{minipage}{7cm}
+$\begin{array}{l}
+     S_{n1} = \top, \\
+     S_{n2} = post_{x:=2}(S_{n1}), \\
+     S_{n3} = post_{x:=x*x}(S_{n2}) \cup post_{x:=x+2}(S_{n4}), \\ 
+     S_{n4} = post_{x < 10}(S_{n3}), \\
+     S_{n5} = post_{x\geq 10}(S_{n3}) \\
+     S_{Error} = post_{x\neq10}(S_{n5}) \\
+     S_{Safe} = post_{x=10}(S_{n5}) \\
+\end{array}$
+\end{minipage}
+\\
+\hline
+\end{tabular}
+\caption{\label{fig:se} A CFG and its static analysis equation}
+\end{figure}
+%
+We present an example of a classical abstract interpretation of program.  
+Figure~\ref{fig:se} shows a CFG and its corresponsing static analysis equations.  
+A static analysis equation encodes the data-flow between individual control-flow 
+nodes in the CFG and is given by a set valued variable $S_n$ for each location $n$ 
+in the CFG.  Recall that each statement $s$ in the program is associated with a
+postcondition transformer, $post_s(S_n)$, that computes the successor state of a 
+statement $s$ starting from $S_n$ that can be reached in one step.  Static analysis 
+using abstract interpretation usually computes a fixed point over the static analysis 
+equation obtained from the Control Flow Graph (CFG) representation of a program~\cite{CC79}.  
+%
+
+Let us consider the equations in Figure~\ref{fig:se} that models the loop, 
+$S_{n3} = post_{x:=x*x}(S_{n2}) \cup post_{x:=x+2}(S_{n4})$, 
+$S_{n4} = post_{z \leq 10}(S_{n3})$.  These equations can be written as 
+a function, $F(X)= \{4\} \cup \{x+2 \mid x \in X, x \leq 10\}$, where 
+$post_{x:=x*x}(S_{n2}) = {4}$.  Assuming variable $x$ is an integer, the 
+lattice of integers with a subset relation is $(\powerset(\mathbb{Z}),\subseteq)$. 
+%
+
+Standard means to infer loop invariant is to compute fixed points of function 
+over this lattice structure~\cite{CC79,octagon}.  The fixed point of the above 
+function gives the set $X$ that satisfies $F(X)=X$.  The loop invariant is given 
+by $x\geq 4 \wedge x\leq 10 \wedge x\equiv 0\;(\bmod 2)$.  The set of values of 
+$x$ satisfying the loop invariant is the least fixed point. 
+%
+
+Abstract interpretation of program computes a fixed point of an abstract
+function (called abstract transformer), over an abstract lattice.  Assuming an
+interval lattice $Intv$ which maps a set of integer values of a variable to 
+its smallest interval that contains it, the function $F$ above is abstracted 
+over an interval lattice as shown below.
+%
+\[ F^{\sharp}([a,b]) = [4,4] \sqcup ([a,b] \sqcap [-\infty,10]) +_{Intv} [2,2] \]
+%
+The initial values of $x$ is $[4,4]$ which is obtained by interval analyis of
+the static analysis equation, $S_{n3} = post_{x:=x*x}(S_{n2})$. The 
+function $F^{\sharp}$ computes an interval at each iteration where the interval 
+below 10 is incremented by 2 and $(+_{Intv})$ denotes an addition operation in
+the interval lattice. 
+%
+Figure~\ref{fig:fixpoint} shows the fixed point computation of the loop in 
+Figure~\ref{fig:se}, over a lattice of intervals.  Each column denotes an
+iteration of the fixed point computation which associates an interval with each
+location in the program.  The initial value of $x$ is $\top$ at $n1$, while the
+locations $n2$, $n3$, $n4$, $n5$, $Error$, $Safe$ are considered unreachable. 
+Each iteration of the loop computes a bound on the variable $x$. 
+The interval $x\colon[4,10]$ at the loop head $n3$ in the last iteration 
+is the loop invariant. 
+In practise, the total number of iterations may be too large to reach the fixed 
+point. Hence, techniques like widening and narrowing are used to accelerate
+convergence. 
+%
+\begin{figure}[t]
+\centering
+\begin{tabular}{ccccc}
+\hline
+  Control Location & Iteration 1 & Iteration 2 & Iteration 3 & Iteration 4\\
+\hline
+  $n1$ & $x\colon\top$ & $x\colon\top$ & $x\colon\top$  & $x\colon\top$ \\ 
+  $n2$ & $x\colon[2,2]$ & $x\colon[2,2]$ & $x\colon[2,2]$ & $x\colon[2,2]$ \\
+  $n3$ & $x\colon[4,4]$ & $x\colon[4,6]$ & $x\colon[4,8]$ & $x\colon[4,10]$ \\
+  $n4$ & $x\colon[6,6]$ & $x\colon[6,8]$ & $x\colon[6,10]$ & $x\colon[6,10]$ \\
+  $n5$ & $x\colon\bot$ & $x\colon\bot$ & $x\colon\bot$ & $x\colon[10,10]$ \\
+  $Error$ &$x\colon\bot$ & $x\colon\bot$ & $x\colon\bot$ & $x\colon\bot$ \\
+  $Safe$ &$x\colon\bot$ & $x\colon\bot$ & $x\colon\bot$ & $x\colon[10,10]$ \\
+\hline
+\end{tabular}
+  \caption{\label{fig:fixpoint} Fixed point computation of program in
+  Figure~\ref{fig:se}}
+\end{figure}
+%

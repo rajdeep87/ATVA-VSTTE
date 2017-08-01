@@ -1,0 +1,521 @@
+\section{Program Model}~\label{pmodel}
+%
+Let $Prog$ be a program. Let $Var$ be the set of variables in the program $Prog$
+and let $Val$ be the set of values that each variable can take and may be a 
+scalar number in set of integers $\mathbb{Z}$ or set of rationals
+$\mathbb{Q}$ or reals $\mathbb{R}$.
+%
+We consider \emph{programs} with bounded loops and finite recursion depth 
+along with safety properties given as a set of assertions, $\assertions$, 
+in the program.  All the loop bounds in the program are known apriori. 
+All functions calls in the program are inlined before analysis.  
+%We also support pointers.  \rmcmt{other program model supported}.
+%
+\section{Semantic Representations of Program}
+%
+The \emph{concrete semantics} of a program is the most precise mathematical
+description of the program behavior. Any other semantic representation of a
+program obtained through static analysis such as {\emph{data-flow
+analysis}~\cite{flow-book} or \emph{set-constraint}~\cite{Cousot:1995} 
+based analysis, is an abstract semantics which is derived from the concrete 
+semantics via Galois connections. 
+
+
+Several semantic representation~\cite{Cousot04,semantic02} of a program have been proposed
+in the literature to analyze program properties.  Cousot~\cite{Cousot04} defines
+a hierarchy of abstraction semantics of a state transition system $M$ corresponding to a 
+control-flow graph $G$.  Cousot starts from partial trace semantics and derive successive
+approximations via Galois connection which follows the sequence -- a) \emph{partial 
+trace semantic}, b) \emph{reflexive transitive closure semantic}, 
+c) \emph{reachability semantic}, d) \emph{interval semantic}. Each semantic 
+representation differ from the other in the precision of the information.  An 
+abstract semantics is less precise than their concrete counterparts and hence 
+can prove less program properties, but are cheaper to compute or approximate.  
+Cousot in~\cite{semantic02} gives a complete range of abstract semantics of a program.
+%
+
+
+\para{Partial Trace Semantics}
+%
+The semantics of a program computes the \emph{states} of a program which gives a
+concise mathematical meaning of a program.  The collecting semantics of a
+program computes all possible memory states that can occur during the execution
+of a program.
+%
+Recall that a trace $\pi$ of a state transition system $M=(\Sigma, \mathcal{R},
+\mathcal{I})$ is a finite sequence of states that follows the transition
+relation $\mathcal{R}$.  Let $\Sigma_{M}^n$ denote the set of finite execution 
+traces of length $n$. Then, $\Sigma_M^0=\emptyset$, while  
+$\Sigma_M^1=\{s \mid s\in \Sigma\}$. 
+Further, a trace of length $(n+1)$ can be expressed recursively as 
+$\Sigma_M^{(n+1)}=\{\sigma ss' \mid \sigma s\in \Sigma_{M}^n \wedge (s,s') \in
+\mathcal{R}\}$.   
+%
+
+
+%Thus, a \emph{concrete semantics}~\cite{Cousot04} of a program is the set of all finite 
+%execution traces, 
+We will denote the \emph{partial trace semantics} as $(\llbracket M \rrbracket_{t})$ 
+which is powerset of traces, $(\powerset(\Pi), \subseteq)$.  
+%
+A fixed point characterization of the trace semantics is defined as follows. 
+%
+\[
+  \mathit{lfp}\; F_{M}^{t}\; \text{where}\; F_{M}^{t}(X) \mathrel{\hat=} \{s \mid s \in
+  \Sigma\} \cup \{\sigma ss' \mid \sigma s \in X \wedge (s,s') \in \mathcal{R} \}
+\]
+%
+\para{Collecting Semantics over Traces}
+%
+The collecting semantics~\cite{Cousot04} of $M$, $\Sigma_{M}^{*}$, 
+is the set of all such finite execution traces of transition system $M$, and is given by 
+$\Sigma_M^*\mathrel{\hat=} \bigcup_{n\geq0}\Sigma_M^{n}$. 
+%
+%
+\para{Reachability Semantics}
+%
+%Whereas, Min\'{e}~\cite{minepaper} starts from 
+A \emph{reachability} semantics~\cite{minepaper} of a state transition 
+system $M=(\Sigma, \mathcal{R},\mathcal{I})$ is the set of states that are 
+reachable from the initial states $\mathcal{I}$. A reachability
+semantics is a complete lattice of powerset of
+states defined as, $(\powerset(V \times (Var \rightarrow Value)), \subseteq,
+\cup, \cap)$ and is denoted by $(\llbracket M \rrbracket_{r})$. 
+%
+A fixed point characterization of the reachability semantics is
+defined as follows.
+\[
+  \mathit{lfp}\; F_M^{r}\; \text{where}\; F_{M}^{r}(S) \mathrel{\hat=} \mathcal{I} \cup \{s' \mid
+   \exists s \in S \wedge (s,s') \in \mathcal{R} \} 
+\]
+%
+Cousot in~\cite{Cousot04} shows that a reachability semantics can be derived
+from a partial trace semantics through a sequence of abstractions.  Thus, 
+the trace semantics $\llbracket M \rrbracket_{t}$ is more precise than the 
+reachability semantics $\llbracket M \rrbracket_{r}$.  However, it is
+practically infeasible to compute the trace semantics of a program 
+that finds all memory states which occur during a program execution. 
+%
+\rmcmt{continuation text}
+\section{Trace Transformers and CFG Safety}
+%
+The semantics of a state transition system $M$ corresponding to a control-flow graph
+$G$ can be defined in terms of \emph{state semantics}~\cite{Cousot04} or \emph{trace
+semantics}~\cite{Cousot04}.  Informally, a state semantics $(\llbracket M \rrbracket_{s})$ 
+or reachable semantics defines the reachable states of $M$ starting from an initial state.  
+Whereas, a trace semantics $(\llbracket M \rrbracket_{t})$ of $M$ is the set of well-formed 
+traces of $M$. 
+%
+In section~\ref{state-transformer}, we define various classical 
+\emph{state transformers} of $M=(\Sigma, \mathcal{R}, \mathcal{I})$ 
+that operates over the powerset of states, $\mathcal{P}(\Sigma)$.
+%
+We now define various trace transformers that operates over $\powerset(\Pi)$ 
+and formulate \emph{CFG safety} in terms of these transformers. The term
+$\sigma_i \in \Sigma$ refers to a state and $\pi \in \Pi$ ranges over a set of 
+traces in $\Sigma^*$. 
+%
+\para{Strongest Postcondition} A \emph{strongest postcondition}
+  transformer, $tpost(T)$, of a set of traces $T \subseteq \Pi$ is defined as  
+  $tpost(T) \mathrel{\hat=} \{\pi.\sigma_l \mid \exists \pi \in \Pi.\; \pi \in T
+  \wedge \{\sigma_a \ldots \sigma_k\} \in \pi \wedge \sigma_k \rightarrow \sigma_l\}$. 
+  The term $\pi.\sigma_l$ denotes extending trace $\pi$ with its postcondition
+  state $\sigma_l$.\\
+%
+\para{Weakest Precondition} A \emph{weakest precondition}
+  transformer, $\widehat{tpre(T)}$, of a set of traces $T \subseteq \Pi$ is defined as  
+  $\widehat{tpre(T)} \mathrel{\hat=} 
+  \{\sigma_b\pi \mid \forall \sigma_a \in \Sigma.
+  \sigma_a\sigma_b\pi \in T \vee \sigma_a \not\rightarrow
+  \sigma_b \}$. \\
+%
+\para{Existential Precondition} An \emph{existential precondition}
+  transformer, $tpre(T)$, of a set of traces $T \subseteq \Pi$ is defined as  
+  $tpre(T) \mathrel{\hat=} \{\sigma_a.\pi \mid \exists \pi \in \Pi.\; \pi \in T
+  \wedge \pi = \{\sigma_b \ldots \sigma_k\} \wedge \sigma_a \rightarrow
+  \sigma_b\}$. 
+  The term $\sigma_a.\pi$ denotes extending trace $\pi$ with its precondition
+  state $\sigma_a$.\\
+%
+\para{Universal Postcondition} An \emph{universal postcondition}
+  transformer, $\widehat{tpost(T)}$, of a set of traces $T \subseteq \Pi$ is defined as  
+  $\widehat{tpost(T)} \mathrel{\hat=}
+  \{\pi\sigma_k  \mid \forall \sigma_l \in \Sigma.
+  \pi\sigma_k\sigma_l \in T \vee \sigma_k \not\rightarrow
+  \sigma_l \}$. 
+%
+%-------------------------------------------------------------------------------
+\para{CFG Safety}  
+%
+Let $G = (V, E, \mathcal{S}, \mathcal{T}, I, E)$ 
+  be a CFG with a special error node $\err \in V$.  A trace $\pi
+  \in G$ is safe if it does not terminate in the error location. A CFG $G$ is
+  \emph{safe} w.r.t. $\err$ if all traces $\pi$ of $G$ are safe
+  w.r.t $\err$.
+%
+We define two trace transformers over $\powerset(\Pi)$ for safety checking of a
+CFG, an unsafe trace transformer, $f_{unsafe}$, and a safe trace transformer,
+$f_{safe}$. A CFG $G$ is \emph{safe} exactly if $f_{unsafe}^{G}(\Pi)=\emptyset$.
+%
+\begin{equation}\label{eq:unsafe}
+f_{unsafe}^{G}(T) \mathrel{\hat=} \{\pi \in \Pi \mid \pi \in T \wedge
+\pi\;\text{ is well formed and not safe} \} 
+\end{equation}
+%
+\begin{equation}\label{eq:safe}
+f_{safe}^{G}(T) \mathrel{\hat=} \{\pi \in \Pi \mid \pi \in T \vee \pi\;
+\text{is not well formed or safe} \} 
+\end{equation}
+%
+\para{Fixed-point Characterization of Unsafe Trace Transformer} 
+%
+We present a fixed point characterization of the unsafe safe transformer for
+counterexample search and conflict generalization. A counterexample search 
+corresponds to finding an abstract representation of a counterexample trace 
+over $\powerset(\Pi)$. 
+%
+Let $\chi$ denote the set of states $\{(v,\omega)\mid v = \err \}$ that 
+are at the error location.  Then, the unsafe trace transformer of CFG $G$, can 
+be characterised as follows.
+%
+\begin{proposition}
+%
+  $f_{unsafe}^{G}(T) = T \cap (\mathit{lfp}\; Z.\;\mathcal{I} \cup tpost(Z)) \cap 
+    (\mathit{lfp}\; Z.\;\chi \cup tpre(Z))$
+%
+\end{proposition}
+%
+\begin{proof}
+  The fixed point characterization of unsafe trace transformer is described as
+  follows. 
+  Let $C1  = (lfp Z.\;\mathcal{I} \cup tpost(Z))$ and $C2 = (lfp Z.\; \chi \cup
+  tpre(Z))$. The set $C1$ gives set of traces that starts from an initial
+  state $\mathcal{I}$ and follows the transition relation $\mathcal{R}$.  
+  The set $C2$ gives the set of traces that follows the transition relation 
+  and terminates in an error state.  The set $C1 \cap C2$ is the set of 
+  well-formed traces that terminates in an error state. It follows 
+  that $f_{unsafe}^{G}(T) = T \cap C1 \cap C2$.  
+\end{proof}
+%
+Note that the two fixed points above, for computing $C1$ and $C2$, represents a
+forward and backward analysis respectively. Combination of forward and backward
+analysis provide strictly greater precision than applying either in
+isolation~\cite{Cousot99} in the abstract.  
+%
+%%%%%%%%%%%%%%%%% TRACE SEMANTICS APPROXIMATION %%%%%%%%%%%%%%%%%%%
+\section{Approximations of Trace Semantics}
+%
+Figure~\ref{fig:semantic} shows the sequence of syntactic translation steps 
+and semantic approximations of concrete set of traces, $\powerset(\Pi)$.  
+A program is represented by a Control-flow Graph $G=(V,E,S,\mathcal{T},I,E)$.  
+Classical abstract interpretation interprets a CFG as equation 
+system~\cite{minepaper,Schmidt98,tacas12}, which is described next.  The box in 
+\emph{red} shows the corresponding lattices that an abstract interpreter
+operates on.  The ACDLP procedure presented in this paper operates on a
+different lattice which is obtained by syntactic translation step
+$\mathcal{T}_2$ that translates a CFG to SSA form. The bounded box in 
+\emph{green} shows the corresponding lattices for ACDLP. In this section, 
+we first describe an equation system that is derived from a CFG which is commonly
+used for abstract interpretation.  Later, we describe a syntactic translation 
+of CFG to Static Single Assignment form which is used for ACDLP procedure.   
+In section~\ref{semantic-trace}, we desribe the corresponding lattices over 
+these structures and various transformers to operate on these lattices. 
+%
+\begin{figure}[htbp]
+\centering
+\scalebox{.70}{\import{figures/}{semantic.pspdftex}}
+\caption{Semantic Representation of Program \label{fig:semantic}}
+\end{figure}
+%
+\rmcmt{\para{Program Transformation $\mathcal{T}_1$}}
+%
+\subsection{CFG to Equation Systems}
+%
+Recall that an operational semantics of a CFG can be defined using a 
+state transition system. An equation 
+system can be derived from a state transition system, which introduces a set
+values varaible $(S_v)_{v \in V}$ to each program location that takes values in
+powerset of environments, $\powerset(Var \mapsto Value)$.  These equations perform 
+point-wise lifting of $\powerset(Var \mapsto Value)$ to $V$.   The variables $S_v$
+are related through the transformers associated with program statements that express the 
+data-flow equations between individual control-flow nodes in the CFG.  Haller
+et. al. call this equation system~\cite{minepaper} 
+\emph{static analysis equation}~\cite{tacas12}.  Solution to these equations 
+yields the data-flow information of $G$.  The resulting lattice that describes 
+these static analysis equations is given by $(\mathcal{F}_G, \sqsubseteq)$.   
+%
+
+
+Figure~\ref{fig:se} gives the CFG representation of a program (in left) 
+and its corresponding static analysis equations (in right).  The 
+function $post(S)$ computes the successor state of a set of states 
+$S$ that can be reached in one step.  A set-valued variable $S_v$ is 
+introduced at every control location $v$ in the CFG.  Note that the variables
+$S_v$ are related through the post-condition transformer $post$ associated with
+the program statements, for example, the variable $S_{n6}$ at the loop head
+merges the control-flow from $S_{n5}$ and $S_{n7}$.  The CFG is \emph{safe} if
+$S_{Error}$ is empty $(\emptyset)$. 
+%
+\para{Collecting Semantics over Equation Systems}
+%
+A collecting semantics over static analysis equations of a program gathers for 
+each program variables and program location its value during program execution.
+%
+\begin{figure}[t]
+%\scriptsize
+\centering
+\begin{tabular}{c|c|}
+\hline
+  Control-Flow Graph & Static Analysis Equation \\
+\hline
+\begin{minipage}{4.2cm}
+\scalebox{.65}{\import{figures/}{semantic-example.pspdftex}}
+\end{minipage}
+&
+\begin{minipage}{10cm}
+$\begin{array}{l}
+     S_{n1} = \top, \\
+     S_{n2} = post_{y>0}(S_{n1}) \\
+     S_{n3} = post_{y=0}(S_{n1}) \\
+     S_{n4} = post_{y<0}(S_{n1}) \\
+     S_{n5} = post_{x:=2}(S_{n2}) \cup post_{x:=0}(S_{n3}) \cup post_{x:=-2}(S_{n4}), \\
+     S_{n6} = post_{y:=x*y}(S_{n5}) \cup post_{y:=y+2}(S_{n7}), \\ 
+     S_{n7} = post_{y \leq 20}(S_{n6}), \\
+     S_{Error} = post_{y<0}(S_{n6})
+\end{array}$
+\end{minipage}
+\\
+\hline
+\end{tabular}
+\caption{\label{fig:se} A CFG and its static analysis equation}
+\end{figure}
+%
+\subsection{Logical Encoding of Program Semantics}~\label{ssa-cite}
+%
+\para{Program Transformation $\mathcal{T}_2$}
+%
+The program transformation $\mathcal{T}_2$ shown in Figure~\ref{fig:semantic}
+involves two separate steps. 
+\begin{enumerate}
+  \item Generation of a \emph{bounded program}
+  \item Translation of acyclic control-flow of bounded program to SSA
+\end{enumerate}
+%
+\para{Generation of Bounded Program}
+%
+A \emph{bounded program} is obtained from an input program by a transformation 
+that unfolds loops and recursions a finite number of times, which generates an
+acyclic control-flow structure.  Figure~\ref{fig:unwind} and figure~\ref{fig:unwind-cfg} 
+gives an input program and the corresponding bounded program obtained through
+loop unrolling, respectively.
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.90}{\import{figures/}{unwind.pspdftex}}
+\caption{Input Program with bounded loops
+  \label{fig:unwind}}
+\end{figure}
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.90}{\import{figures/}{unwind-cfg.pspdftex}}
+\caption{Generating Bounded Program throug loop unrolling
+  \label{fig:unwind-cfg}}
+\end{figure}
+%
+The CFG representation of the bounded program is 
+translated to a Static Single Assignment (SSA) form 
+%through the syntactic translation step, $\mathcal{T}_2$, as illustrated in Figure~\ref{fig:semantic}.  
+The translation from CFG to SSA is a well known technique 
+in optimizing compiler and verification~\cite{ssa1,ssa2,ssa1988,ssa1991}.  We 
+briefly explain the details of the CFG to SSA translation since this is standard. 
+%
+\para{CFG to Static Single Assignment Form}
+%
+The translation from CFG to SSA follows two separate steps.  
+The first step gives a unique \emph{index} to each
+definition of a program variable, and each use of that variable is given the
+index of the definition that reaches it; the second step insert special 
+$\phi$-functions at control-flow join points where a given variable may have
+more than one reaching definition.  The argument to a $\phi$-function is the 
+set of all indexed instance of the variable that could reach the join point.
+Based on the current execution trace, the $\phi$-function select an appropriate
+instance of the variable and assign it to a new instance of the variable. The
+translation involves the following steps. 
+%
+\begin{enumerate}
+\item A unique name for each definition point in the procedure, shown in
+  figure~\ref{fig:ssa-simple}. 
+\item Identifies points in the procedure that merges different values from
+  distinct control-flow paths, shown in figure~\ref{fig:ssa-simple}  
+\item Identification of induction variables in loops becomes easy by inserting a
+  $\phi$-function for any variable that is modified inside the
+    loop~\cite{Gerlek:1995}.
+\end{enumerate}
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.90}{\import{figures/}{ssa-simple.pspdftex}}
+\caption{CFG to SSA Translation Steps
+  \label{fig:ssa-simple}}
+\end{figure}
+%
+Figure~\ref{fig:unwind-ssa} gives an example of SSA translation for the bounded
+program in Figure~\ref{fig:unwind-cfg}.
+%for a simple CFG, following the above mentioned steps.
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.90}{\import{figures/}{unwind-ssa.pspdftex}}
+  \caption{Static Single Assignment form for Bounded Program of
+  Figure~\ref{fig:unwind-cfg}
+  \label{fig:unwind-ssa}}
+\end{figure}
+%
+\para{Collecting semantics over SSA}
+%
+A collecting semantics over SSA of a bounded (loop free) program gathers for each 
+SSA variables its value during program execution.
+%
+\para{Advantages of SSA}
+%
+Previous researches have shown that Static Single Assignment form has
+advantages over other forms of programs representation which allows compilers to
+facilitate program analysis through simplification of data-flow analysis such as
+def-use and use-def chains and design of optimization
+algorithms~\cite{ssa1991,ssa1,ssa2}. 
+%
+\para{Exact SSA semantics} An SSA semantics is \emph{exact} if it is
+constructed from a bounded program.  Recall that a bounded program is 
+obtained through \emph{complete} unwindings of all loops and recursions, which
+gives an acyclic code.  
+Therefore, for acyclic code, an SSA exactly represents the strongest 
+post-condition computation of the code.
+The lattice that describe these SSA constraints over SSA 
+variables is given by $(\mathcal{SA}_G, \subseteq_{SA})$.  
+%
+%Chapter~\ref{six} gives the \emph{exact}, \emph{overapproximate} and \emph{underapproximate} SSA semantics for an input program. 
+%
+In this paper,  we restrict our formalizations to bounded programs which 
+gives an exact SSA semantics of a program.  
+%
+\para{SSA Safety}
+%
+The translation from CFG to SSA is represented by a set 
+$\constraints=\program\cup\{\neg \bigwedge_{\assertion\in\assertions} \assertion\}$,
+where $\program$ contains an encoding of the statements in the program as
+constraints, obtained after translating the program into single static 
+assignment (SSA) form~\cite{ssa88,ssa1988,ssa1991}. 
+%
+Based on the above program representation, we define a \textit{safety formula}
+($\formula$) as the conjunction of all elements in $\constraints$, that is,  
+$\formula:= \bigwedge_{\constraint\in\constraints} \constraint$.  The formula 
+$\formula$ is unsatisfiable if and only if the program is safe.
+\rmcmt{Intuitively, $\formula$ is the usual SAT encodings of BMC for
+reachability.} 
+%
+\begin{example}
+The safety formula $\formula$ for the bounded program of 
+figure~\ref{fig:unwind-ssa} is shown below.  Note that $\formula$ is obtained
+by taking conjunction of all SSA and the negation of set of assertions. 
+%
+\begin{equation}\label{eq:ssa}
+\begin{array}{l}
+  \formula = (x_0 = 0) \wedge
+     (x_0 \leq 2) \wedge
+     (x_1 = x_0 + 1) \wedge
+     (x_1 \leq 2) \wedge
+     (x_2 = x_1 + 1) \wedge
+     ((x_1 > 2) \vee (x_2 > 2)) 
+\end{array}
+\end{equation}
+\end{example}
+%
+\para{Translation from Static Single Assignment to Program Trace}
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.90}{\import{figures/}{syn-map.pspdftex}}
+\caption{Concretization-Based Approximation of Trace Semantics in ACDLP
+  \label{fig:syn-map}}
+\end{figure}
+%
+Recall that $(\powerset(\Pi),\subseteq)$ and $(\mathcal{SA}_G, \subseteq_{SA})$ 
+forms a \emph{concretization-based galois connection} through a concretization
+operator $\gamma_T$, as shown in figure~\ref{fig:lattice}. Cousot and Cousot in
+~\cite{CC92} propose a relaxation of galois connection framework that allows to work
+only with a concretization operator $\gamma$ or dually an abstraction operator
+$\alpha$.  We will use this concept to establish the relationship between 
+$(\powerset(\Pi),\subseteq)$ and $(\mathcal{SA}_G, \subseteq_{SA})$ only through a 
+concretization operator, $\gamma_T$.  Figure~\ref{fig:syn-map} illustrates that 
+$\gamma_{T}$ can be achieved through the syntactic back-translation steps, 
+$\mathcal{T}_1'$ and $\mathcal{T}_2'$.  
+%
+\para{Program Transformation $\mathcal{T}_2'$}
+%
+The program transformation $\mathcal{T}_2'$ shown in Figure~\ref{fig:syn-map}
+involves two separate steps. 
+%
+\begin{enumerate}
+  \item Copy-insertion~\cite{Srikant:2007} to remove $\phi$-nodes. 
+  \item \rmcmt{Variable renaming in each basic blocks}
+\end{enumerate}
+%
+The translation of SSA to an original program following these syntactic translation
+steps is a well known technique in compiler-based code
+optimization~\cite{Briggs:1998,ssa1991,Srikant:2007}.
+Briggs et. al.~\cite{Briggs:1998} give an algorithm for translation of SSA 
+to the original program by replacing $\phi$-functions with appropriately-placed
+\emph{copy} instructions.  The program semantics is preserved by inserting a 
+copy statement for each argument of $\phi$-function, at the end of each 
+predecessor block of the $\phi$-node. Figure~\ref{sp} shows an example of copy
+insertion to replace $\phi$-function in SSA.  We skip the details of the translation 
+from SSA back to original program since this is standard and beyond the scope of 
+this paper.
+%
+\rmcmt{what happens to ssa variables}.
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.70}{\import{figures/}{sp.pspdftex}}
+  \caption{Back-translation from SSA to CFG using copy insertion
+  \label{sp}}
+\end{figure}
+%
+\begin{definition} (Concretization) 
+  \[
+    \gamma_T \colon (\mathcal{SA}_G,\subseteq_{SA})
+    \overset{\gamma_{T}}{\rightharpoonup}
+    (\powerset(\Pi), \subseteq) 
+  \]
+$\gamma_T$ is automatically monotonic since $\gamma_T(A) = \pi$, where $A \in
+  \mathcal{SA}_G$ is an exact abstraction of $\pi \in \Pi$.  That is, 
+  $(\mathcal{SA}_G, \subseteq_{SA})$ is an exact abstraction of 
+  $(\powerset(\Pi),\subseteq)$ for the programs considered in this paper (see
+  section~\ref{pmodel}).
+\end{definition}
+%  
+\rmcmt{Given a SSA representation of a program, the semantics of a program 
+can be understood as a constraint system which is a conjunction of all 
+SSA constraints.  A satisfying model of safety formula ($\formula$) 
+containing SSA constraints corresponds to an unsafe trace (or counterexample) 
+of the original program.  Later, we present a procedure for finding a satisfiable
+assignment of $\formula$ in section~\ref{acdlp}.  Note that the model of
+$\formula$ contains concrete assignments to SSA variables, which has to be
+mapped back to the original program.}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{domain.tex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{ai.tex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

@@ -1,12 +1,12 @@
 %%% Standard text acronyms
 
-% TOO MANY VARIANTS if we INTRODUCE THIS.
 \newcommand{\para}[1]{
-  \subsubsection*{#1}}
+   \subsubsection*{#1}}
  
 %\noindent
 %\textbf{#1~}}
 
+\newcommand{\Omit}[1]{}
 \newcommand{\cnf}{\textsc{cnf}\xspace}
 \newcommand{\sat}{\textsc{sat}\xspace}
 \newcommand{\smt}{\textsc{smt}\xspace}
@@ -30,14 +30,27 @@
 %%% Mathematical Symbols %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\renewcommand{\vec}[1]{{\overrightarrow #1}}
-\newcommand{\vecv}[2]{{\left(\begin{array}{@{}c@{}} #1 \\ #2\end{array}\right)}}
-\newcommand{\qmat}[4]{{\left(\begin{array}{@{}cc@{}} #1 & #2 \\  #3 & #4\end{array}\right)}}
+\renewcommand{\vector}[1]{{\boldsymbol #1}}
+
+  \newcommand{\vecv}[2]{{\left(\begin{array}{@{}c@{}} #1 \\ #2\end{array}\right)}}
+  
+  \newcommand{\vecvv}[4]{{\left(\begin{array}{@{}c@{}c@{}c@{}} 
+    #1 \\ #2 \\ #3 \\ #4 \end{array}\right)}}
+  
+  \newcommand{\vecvvv}[8]{{\left(\begin{array}{@{}c@{}c@{}c@{}c@{}c@{}c@{}c@{}} 
+    #1 \\ #2 \\ #3 \\ #4 \\ #5 \\ #6 \\ #7 \\ #8 \end{array}\right)}}
+  
+  \newcommand{\hmat}[2]{{\left(\begin{array}{@{}cc} #1 & #2 \end{array}\right)}}
+  \newcommand{\qmat}[4]{{\left(\begin{array}{@{}cc@{}} #1 & #2 \\  #3 & #4\end{array}\right)}}
+  \newcommand{\qqmat}[8]{{\left(\begin{array}{@{}cc@{}cc@{}cc@{}} #1 & #2 \\  #3 & #4 \\ 
+    #5 & #6 \\ #7 & #8 \end{array}\right)}}
+ 
 \newcommand{\mat}[1]{{\boldsymbol #1}}
 
 %%% Sets and functions
 
-\newcommand{\powerset}{\ensuremath{\wp}}
+\newcommand{\powerset}{\mathcal{P}}
+%\newcommand{\powerset}{\ensuremath{\wp}}
 \newcommand{\set}[1]{\ensuremath{\left\{#1\right\}}}
 \newcommand{\setneg}[1]{\overline{#1}}
 \newcommand{\setsep}{\ensuremath{~|~}}
@@ -65,7 +78,7 @@
 \newcommand{\program}{\mathit{Prog}}
 \newcommand{\assertions}{\mathit{Assn}}
 \newcommand{\assertion}{\mathit{a}}
-\newcommand{\constraints}{\Sigma}
+\newcommand{\constraints}{\Sigma^\dagger}
 \newcommand{\constraint}{\sigma}
 \newcommand{\formula}{\varphi}
 
@@ -84,6 +97,7 @@
 \newcommand{\conflictset}{\mathit{C}}
 \newcommand{\exclude}{\mathit{exclude}}
 
+\newcommand{\modformula}[2]{\llbracket #1 \rrbracket_{#2}}
 \newcommand{\abstrans}[2]{\llbracket #2 \rrbracket_{#1}}
 \newcommand{\abdgen}[3]{abdgen_{#1,#2}^{#3}}
 \newcommand{\abd}[2]{abd_{#1}^{#2}}
@@ -99,12 +113,12 @@
 \newcommand{\val}{\mathit{u}}
 \newcommand{\concval}{\mathit{concVal}}
 \newcommand{\absval}{\mathit{a}}
-\newcommand{\allval}{\mathit{A}}
 \newcommand{\newdeductions}{\mathit{v}}
 \newcommand{\intervals}{\mathit{Itvs}}
 \newcommand{\octagons}{\mathit{Octs}}
 \newcommand{\onlynew}{\mathit{onlyNew}}
 \newcommand{\aunit}{\mathit{AUnit}}
+\newcommand{\allval}{\mathit{A}}
 
 \newcommand{\abs}{\mathit{abs}}
 \newcommand{\trail}{\mathcal{T}}

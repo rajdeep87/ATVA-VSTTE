@@ -1,0 +1,23 @@
+\begin{picture}(0,0)%
+\includegraphics{schema_pspdftex}%
+\end{picture}%
+\setlength{\unitlength}{4144sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(8484,1509)(979,-3763)
+\put(1081,-2761){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$apre_s\; apost_s\; \widehat{apre_s}\; \widehat{apost_s}$}%
+}}}}
+\put(1081,-3076){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$f_{asafe}^{\rightarrow}\; f_{asafe}^{\leftarrow}\; f_{aunsafe}^{\leftarrow}\; f_{aunsafe}^{\rightarrow}$}%
+}}}}
+\put(1081,-3391){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$f_{dec}$}%
+}}}}
+\put(1081,-3661){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$int\upharpoonright\; AUnit$}%
+}}}}
+\put(1081,-2491){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\widehat{\mathcal{SA}_{G}}\; \sqsubseteq_{SA}\; \sqcap_{SA} \;\sqcup_{SA}\; \top\; \bot$ }%
+}}}}
+\end{picture}%

@@ -1,0 +1,745 @@
+%%%%%%%%%%%%%%%%%%%%%%% Trace-based Abstraction  %%%%%%%%%%%%%%%%%%%%%
+%
+\section{Lattice for Approximation of Trace Semantics}~\label{semantic-trace}
+%
+In this section, we describe the various lattices over the static analysis
+equations and static single assignment form for a given control-flow graph.  
+Figure~\ref{fig:lattice} shows the various lattices that approximate the
+concrete trace semantics.
+%
+
+
+An important property of a clause learning SAT solver is that each meet
+irreducibles of the partial assignments domain admits precise
+complements~\cite{sas12}.  This property enables learning of domain 
+elements that navigates the search away from the conflicting region.   
+In order to lift CDCL to program analysis, it is imperative to find a suitable
+trace based abstraction that admits precise complementation property. 
+To this end, we first show that conventional means to represent a program through 
+abstraction of a static analysis equation does not admit precise 
+complements with respect to unsafe traces.   In this paper, we present an 
+abstraction of program traces using logical encoding of CFG that bounded 
+model checkers use.  We will show in Section~\ref{complement} that this 
+representation allows us to lift CDCL to program analysis.  
+%
+%Hence, our formalizations can be understood as a full abstract interpretation 
+%account of bounded model checking.
+%\rmcmt{with the hope that this leads to ideas of how
+%loops can be approximated in bounded model checking.} 
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.70}{\import{figures/}{lattice.pspdftex}}
+  \caption{Approximation of Trace Semantics used by ACDLP (right) and Abstract
+  Interpretation (left)
+  \label{fig:lattice}}
+\end{figure}
+%
+\subsection{Concrete Flow Lattice}
+%
+Abstract interpretation technique for program analysis computes 
+a fixed-point over static analysis equations~\cite{CC79,octagon}.  
+The advantage of using approximations of static analysis equation 
+over trace based abstraction is that the former only requires 
+abstractions of memory states.  \\
+%
+We now define the \emph{concrete flow lattice} that describes these static 
+analysis equations with respect to the set of control locations. 
+%
+\begin{definition} (Concrete Flow Lattice). A \emph{concrete flow lattice}
+  corresponding to a CFG $G= (V, E, \mathcal{S}, \mathcal{T}, I)$  
+  is a complete lattice $(\mathcal{F}_{G}, \sqsubseteq, \sqcap, \sqcup)$, 
+  defined as follows. 
+\end{definition}
+  \[
+    \mathcal{F}_{G} \mathrel{\hat=} V \rightarrow \powerset({\Omega}) \qquad \forall a,b \in
+     \mathcal{F}_{G}.\; a \sqsubseteq b\; \text{if}\; \forall v \in V.\; a(v)
+     \subseteq b(v) 
+  \]
+
+  \[
+     a \sqcap b \mathrel{\hat=} v \mapsto a(v) \cap b(v) \qquad 
+     a \sqcup b \mathrel{\hat=} v \mapsto a(v) \cup b(v)
+  \]
+%
+%The static analysis equations corresponding to a control flow graph is shown in
+%Figure~\ref{fig:se}.
+%
+\Omit{
+Recall that a CFG statement $s$ corresponds to a state transition, that is, 
+$\mathcal{ST}_s \subseteq \Omega \times \Omega$.  Hence, we define a
+\emph{postcondition transformer} and \emph{precondition transformer} 
+for $\mathcal{T}(u,v)=s$.
+%
+\[ 
+  post_{u,v}(S) \mathrel{\hat=} \{\omega_k \mid \exists\; \omega_j \in S.\;
+  (\omega_j,\omega_k) \in \mathcal{ST}_s \}
+\]
+%
+\[ 
+  pre_{u,v}(S) \mathrel{\hat=} \{\omega_j \mid \exists\; \omega_k \in S.\;
+  (\omega_j,\omega_k) \in \mathcal{ST}_s \} 
+\]
+%
+\begin{definition} (Concrete Flow Lattice Transformers). We define a strongest
+  postcondition transformer and an existential precondition transformer of a 
+  concrete flow lattice, $\mathcal{F}_{G}$ as follows.  
+\end{definition}
+  \[
+    fpost \colon \mathcal{F}_{G} \rightarrow \mathcal{F}_{G} 
+    \qquad 
+    fpre \colon \mathcal{F}_{G} \rightarrow \mathcal{F}_{G} 
+  \]
+  \[
+    fpost(v \mapsto a(v)) \mathrel{\hat=} \underset{(u,v) \in E}{\bigcup}
+    post_{u,v} \circ a(u) 
+    \qquad 
+    fpre(v \mapsto a(v)) \mathrel{\hat=} \underset{(v,w) \in E}{\bigcup}
+    pre_{v,w} \circ a(w) 
+  \]
+%
+}
+The concrete flow lattice is an over-approximation of the concrete powerset of
+traces and there exists a galois connection between the two as shown below. 
+\[
+  (\powerset({\Pi}),\subseteq,\cup,\cap)
+    \galois{\alpha_{F}}{\gamma_{F}}
+    (\mathcal{F}_{G},\sqsubseteq,\sqcup,\sqcap)
+\]
+We define the abstraction and concretization functions between the concrete
+trace domain $\powerset({\Pi})$ and concrete flow lattice $\mathcal{F}_{G}$.
+\[
+  \alpha_{F}(T) \mathrel{\hat=} \lambda v. \{\omega \mid \exists
+  \pi \in T.\; (v,\omega) \in \pi \} 
+\]
+\[
+  \gamma_{F}(a) \mathrel{\hat=} \{\pi \in \Pi \mid \forall (v,\omega) \in \pi.\;
+  \omega \in a(v) \wedge \pi \in \Pi_{wf} \}
+\]
+%
+It is easy to see that $\alpha_F \circ \gamma_{F}$ is deflationary while 
+$\gamma_F \circ \alpha_F$ is inflationary, and the pair $(\alpha_F, \gamma_F)$
+forms a galois connection. We prove this in proposition~\ref{ag}. 
+%
+
+
+For the purpose of static analysis, the concrete semantics of program's
+control-flow graph is over-approximated using abstract interpretation
+methodology~\cite{CC79}. The concrete domain of memory states 
+$\powerset({\Omega})$ is abstracted to construct an abstract program
+model which is then used for abstract program analysis.  Most static program
+analyzers build an abstraction $A$ of the memory states $\Omega$, shown below. 
+\[
+  (\powerset({\Omega}),\subseteq)
+    \galois{\alpha_{AF}}{\gamma_{AF}}
+    (\mathcal{A},\sqsubseteq_{AF})
+\]
+%
+\begin{definition} (Abstract Flow Lattice). An \emph{Abstract Flow Lattice}
+  corresponding to a CFG $G= (V, E, \mathcal{S}, \mathcal{T}, I)$ and 
+  an abstraction $\mathcal{A}$ over concrete memory states $\Omega$
+  is a complete lattice $(\widehat{\mathcal{F}_{G}}, \sqsubseteq_{AF}, \sqcap_{AF},
+  \sqcup_{AF})$, 
+  which is defined as follows. 
+\end{definition}
+  \[
+    \widehat{\mathcal{F}_{G}} \mathrel{\hat=} V \rightarrow \mathcal{A} \qquad \forall a,b \in
+     \widehat{\mathcal{F}_{G}}.\; a \sqsubseteq b\; \text{if}\; \forall v \in V.\; a(v)
+     \sqsubseteq_{AF} b(v) 
+  \]
+%
+  \[
+    a \sqcap_{AF} b \mathrel{\hat=} v \mapsto a(v) \sqcap_{AF} b(v) \qquad 
+     a \sqcup_{AF} b \mathrel{\hat=} v \mapsto a(v) \sqcup_{AF} b(v)
+  \]
+%
+\subsection{Complementation in Abstract Flow Lattice}~\label{complement-fg}
+%
+A meet irreducible of abstract flow lattice $\widehat{\mathcal{F}_{G}}$ is defined as
+follows.
+\[
+  \sqcap_{irrd}(\widehat{\mathcal{F}_{G}}) \mathrel{\hat=} 
+  \left\{\begin{array}{l@{\quad}l}
+    n \mapsto a & \text{if}\; n \in V \wedge a \in \sqcap_{irrd}(\mathcal{A}) \\
+    n \mapsto \top & \text{otherwise} \\
+  \end{array}\right.
+\]  
+%
+Here, a node $n \in V$ is mapped to an abstract memory state $a \in \mathcal{A}$, 
+where $a$ is a meet irreducible of $A$.  Let $n \mapsto \bar{a}$ be a precise 
+complement of $n \mapsto a$, where $\bar{a}$ is a precise complement of $a$.    
+However, the two sets are not equal, that is, 
+$\gamma_{AF}(n \mapsto a) \neq \neg \gamma_{AF}(n \mapsto \bar{a})$.
+The element $\neg \gamma_{AF}(n \mapsto \bar{a})$ gives the set of traces 
+where some occurrences of $n$ are contained in the concretization of
+$\gamma_{AF}(a)$.  Whereas, the element $\gamma_{AF}(n \mapsto a)$ gives 
+the set of traces where all occurrences of $n$ are contained in the 
+concretization of $\gamma_{AF}(a)$.  This is explained below.
+%
+\[
+  \gamma_{AF}(n \mapsto a) \mathrel{\hat=} \{\pi \in \Pi \mid \forall (n,\omega) \in
+  \pi. \omega \in \gamma_{AF}(a) \}
+\]
+%
+\[
+  \neg \gamma_{AF}(n \mapsto \bar{a}) \mathrel{\hat=} \neg \{\pi \in \Pi \mid \forall (n,\omega) \in
+  \pi. \omega \not\in \gamma_{AF}(a) \}
+\]
+%
+\[
+  \neg \gamma_{AF}(n \mapsto \bar{a}) \mathrel{\hat=} \{\pi \in \Pi \mid \exists (n,\omega) \in \pi. \omega \in \gamma_{AF}(a) \}
+\]
+%
+%An important requirement of ACDLP is that the meet irreducibles in the domain 
+%must be precisely complementable with respect to the unsafe trace transformer.  
+The abstract control flow lattice $\widehat{\mathcal{F}_{G}}$ does not always have 
+complementable meet irreducibles.  So, we define a domain over logical encodings 
+of the CFG, the elements of which admits precise complementation property.
+%
+\subsection{Lattice Structure over SSA}~\label{state-transformer}
+%
+We now define a lattice over SSA structures that admits precise complementation 
+property which is necessary for lifting CDCL to program analysis. Let
+$Var_{ssa}$ denote the set of SSA variables in the SSA form and $Value$ denote the
+set of values that these SSA variables can take.  Note that the set $Var_{ssa}$ is
+obtained from the CFG $G= (V, E, \mathcal{S}, \mathcal{T}, I)$ through program
+transformation $\mathcal{T}_2$. 
+%
+\begin{definition} (Static Assignment Lattice). A \emph{Static Assignment Lattice}
+  corresponding to a CFG $G= (V, E, \mathcal{S}, \mathcal{T}, I)$ is a complete 
+  lattice $(\mathcal{SA}_{G}, \subseteq_{SA}, \cup_{SA}, \cap_{SA})$, defined 
+  as follows.
+\end{definition}
+%
+  \[
+    \mathcal{SA}_{G} \mathrel{\hat=} \powerset(Var_{ssa} \rightarrow Value)
+    \quad \forall A,B \in
+    \mathcal{SA}_{G}.\; A \subseteq_{SA} B\; \text{if}\; \forall a \in A.\; 
+    a \in B 
+  \]
+\rmcmt{  
+  \[
+    A \cap_{SA} B \mathrel{\hat=} \lambda\; x. ( \{f(x) \cap g(x) \mid 
+    f \in A, g \in B \}) 
+    \qquad 
+    A \cup_{SA} B \mathrel{\hat=} \lambda\; x. ( \{f(x) \cup g(x) \mid 
+    f \in A, g \in B \}) 
+  \]
+}
+%
+%%%%%%%%%%%%%%%% Static Single Assignment Lattice %%%%%%%%%%%%%%%%%%
+%
+Figure~\ref{fig:concrete} gives an example of concrete static assignment lattice
+over SSA variables $p$ of type boolean and $x$, $y$ of numerical types. Note
+that the lattice $\mathcal{SA}_G$ is a set of concrete environments over SSA
+variables.  We will call these \emph{concrete SSA environments}.  Following the
+result of Briggs et. al.~\cite{Briggs:1998}, the elements of $\mathcal{SA}_G$
+can be mapped back to a trace of the original program.  The elements marked in bold 
+in Figure~\ref{fig:concrete} corresponds to concrete assignments to SSA variables 
+that maps to a concrete program trace. 
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.90}{\import{figures/}{concrete_env.pspdftex}}
+\caption{Concrete Static Assignment Lattice over a boolean SSA variable $p$ and two
+  numerical SSA variables $x$ and $y$ that takes values in Integer domain \label{fig:concrete}}
+\end{figure}
+%
+
+
+An SSA statement (or program transformer) $s \in \constraints$ transforms the 
+memory state of a program and is 
+therefore associated with a strongest postcondition or an existential 
+precondition transformer. Let us assume that each SSA statement is also 
+associated with a transition relation, $\mathcal{ST}_{s}^{\Omega}$. 
+%
+\begin{definition} (Strongest Postcondition and Existential Precondition).
+  \[
+     post_{s}(A) \mathrel{\hat=} \{\omega' \mid \exists \omega \in
+     \Omega. \omega \in A \wedge (\omega,\omega') \in \mathcal{ST}_{s}^{\Omega} \} 
+  \] 
+  \[ 
+     pre_{s}(A) \mathrel{\hat=} \{\omega \mid \exists \omega' \in
+     \Omega. \omega' \in A \wedge (\omega,\omega') \in \mathcal{ST}_{s}^{\Omega}\} 
+  \]
+\end{definition}
+%
+\begin{definition} (Weakest Precondition and Universal Postcondition). 
+  \[
+    \widehat{pre_s}(A) \mathrel{\hat=} \{\omega \mid \forall \omega' \in
+    \Omega.\; \omega' \in A \vee (\omega,\omega') \not\in \mathcal{ST}_{s}^{\Omega} \}.
+  \]
+  \[ 
+     \widehat{post_s}(A) \mathrel{\hat=} \{\omega' \mid \forall \omega \in
+     \Omega.\; \omega \in A \vee (\omega,\omega') \not\in
+     \mathcal{ST}_{s}^{\Omega} \}.
+  \]
+\end{definition}
+%
+\Omit{
+\begin{definition} (Static Assignment Transformers). 
+   $
+     post_{\mathcal{SA}}, pre_{\mathcal{SA}} : \mathcal{SA}_G
+      \rightarrow \mathcal{SA}_{G} 
+   $
+   \[
+     post_{\mathcal{SA}}(a) \mathrel{\hat=} \bigcup_{s \in \rmcmt{\constraints}}
+     post_{s}(a) 
+     \quad
+     pre_{\mathcal{SA}}(a) \mathrel{\hat=} \bigcup_{s \in \rmcmt{\constraints}}
+     pre_{s}(a) 
+   \]
+\end{definition}
+}
+%
+\begin{figure}[t]
+\centering
+\vspace*{-0.2cm}
+\scalebox{.70}{\import{figures/}{state_transformer.pspdftex}}
+  \caption{Strongest postcondition $post_s$ (Blue), Existential precondition
+  $pre_s$ (Red), Universal postcondition $\widehat{post_s}$ (Pink), 
+  Weakest precondition $\widehat{pre_s}$ (Green)}
+\label{state-transformer}
+\end{figure}
+%
+Figure~\ref{state-transformer} graphically shows the result of various
+state transformers for a given memory state $A$. A strongest postcondition 
+maps a set of states $A$ to the set of all successor states that can be reached
+in one step, whereas an existential precondition maps a set of states $A$ to
+states the program \emph{may} have before executing $s$. A weakest precondition maps a set of states $A$ to the set
+of states which can \emph{only} reach elements of $A$. Whereas, an universal
+postcondition maps $A$ to set of states the program \emph{must} reach after
+executing $s$.
+%
+
+Recall that the trace transformers $tpost$ and $tpre$ are defined over
+$\powerset(\Pi)$. The transformers, $post_{s}$ and $pre_{s}$, soundly 
+approximate $tpost$ and $tpre$ respectively.  \rmcmt{how ? --relate to syntactic
+transformation T2}
+%
+The global static assignment transformers for the lattice $\mathcal{SA}_G$ over 
+a set of SSA constraints $\constraints$ can be easily derived from state
+transformers, $post_s, pre_s$.  This is defined next.
+%
+\begin{definition} (Global Static Assignment Transformers). 
+  \[ 
+  post_{\constraints}, pre_{\constraints}, 
+  \widehat{post_{\constraints}}, \widehat{pre_{\constraints}}, 
+  \colon \mathcal{SA}_G \rightarrow \mathcal{SA}_G
+  \]
+    
+  \[
+  post_{\constraints}(a) \mathrel{\hat=} \underset{\sigma \in
+  \constraints}{\bigcap} post_\sigma \circ a
+  \qquad  
+  pre_{\constraints}(a) \mathrel{\hat=} \underset{\sigma \in
+  \constraints}{\bigcap} pre_\sigma \circ a
+  \]
+  
+  \[
+  \widehat{post_{\constraints}}(a) \mathrel{\hat=} \underset{\sigma \in
+  \constraints}{\bigcap} \widehat{post_\sigma} \circ a
+  \qquad   
+  \widehat{pre_{\constraints}}(a) \mathrel{\hat=} \underset{\sigma \in
+  \constraints}{\bigcap} \widehat{pre_\sigma} \circ a
+  \]
+\end{definition}
+%
+\rmcmt{The transformers, $post_{\constraints}$ and $pre_{\constraints}$, soundly 
+approximate $tpost$ and $tpre$ respectively. (say how?) }
+%
+We now define an abstraction of static assignment lattice which we 
+call \emph{abstract static assignment} domain. 
+The concrete static assignment domain is a complete lattice of concrete 
+SSA environments.  The abstractions of concrete static assignment domain fall
+into two categories; an abstraction that preserves the relationship between 
+SSA variables and the other which does not preserve any relation. 
+%
+
+First, we give an abstraction of static assignment lattice that does not
+preserve relationship between SSA variables.  Then, we present a generic 
+abstraction using a \emph{template-based abstract domain} that can express 
+relational as well as non-relational abstractions of SSA environments.  
+%An advantage of a template-based domain is that it can be instantiated with 
+%arbitrary templates over relational or non-relational domains.  
+This provides the flexibility to instantiate CDCL over arbitrary abstract domains for 
+program analysis.  
+%
+\para{Abstract Static Assignment Lattice Over Non-relational Domains}
+%
+An abstraction of $\mathcal{SA}_G$ over non-relational domain requires each SSA
+variables in $SSA_{var}$ to be abstracted independently of each other.  
+The concrete domain of $\powerset(Var_{ssa} \rightarrow Value)$ is abstracted 
+through a function which maps each SSA variable to an abstract value.  We 
+assume that there is a galois connection $(\alpha_v,\gamma_v)$ such that
+  $(Value, \subseteq)
+   \galois{\alpha_{v}}{\gamma_{v}}
+   (\widehat{Value}, \sqsubseteq)$.   
+%
+Then, an abstraction of $\mathcal{SA}_G$ over non-relational domain, denoted by
+$\mathcal{SA}_G^\dagger = \powerset(Var_{ssa} \rightarrow \widehat{Value})$, 
+can be constructed using the following galois connection 
+$(\alpha^\dagger,\gamma^\dagger)$.
+\[
+   (\mathcal{SA}_{G},\subseteq_{SA})
+   \galois{\alpha^\dagger}{\gamma^\dagger}
+   ({\mathcal{SA}_{G}}^\dagger,\sqsubseteq^\dagger)
+\]
+\[
+  \alpha^\dagger(c) \mathrel{\hat=} \lambda x.\alpha_v(\bigcup\{\tau(x) \mid \tau
+  \in c\})
+\]
+\[
+  \gamma^\dagger(a) \mathrel{\hat=} \{\lambda x.v' \mid v' \in (\gamma_v \circ
+  a)(x)\}
+\]
+%
+\begin{example}
+%
+An example of $({\mathcal{SA}_{G}}^\dagger,\sqsubseteq^\dagger)$ over an
+Interval domain $Itv$ maps each SSA variable on an Interval, where 
+$(\alpha_v,\gamma_v) = (\alpha_{Itv}, \gamma_{Itv})$.  Consider an SSA 
+$c=\{x_1:=2, x_2 \geq 5\}$, then $\alpha^\dagger(c) = \{x_1=[2,2],x_2=[5,\infty]\}$
+\end{example}
+%
+\para{Abstract Static Assignment Lattice Over Template-based Domains}
+%
+A folk wisdom in abstract interpretation community is that an analysis using 
+non-relational domains are effective but imprecise. However, for practical
+purposes, it is imperative to keep track of relations between program variables.  
+A relational domain can express relationship between variables, though with varying
+expressivity, depending on a weak or strong relational domain.  We now construct
+an abstraction of $\mathcal{SA}_G$ using a template-based domain, denoted by 
+$\widehat{\mathcal{SA}_{G}}$, which can be instantiated with arbitrary templates 
+over relational or non-relational domains. Note that from this point onwards, we 
+will operate on $\widehat{\mathcal{SA}_{G}}$ instead of ${\mathcal{SA}_{G}}^\dagger$. 
+%
+\begin{definition}~\label{assl} (Abstract Static Assignment Lattice). An \emph{Abstract Static 
+Assignment Lattice} corresponding to a CFG $G= (V, E, \mathcal{S}, \mathcal{T}, I)$ 
+and a set $X$ of values of vector $\vec{x}$ of variables in the 
+corresponding SSA, is a complete lattice 
+  $(\widehat{\mathcal{SA}_{G}}, \sqsubseteq_{SA}, \sqcap_{SA}, \sqcup_{SA})$, which 
+is defined as follows. 
+\[
+  \widehat{\mathcal{SA}_{G}} \mathrel{\hat=} C\vec{x} \leq \vec{d},\; \text{where}\; 
+  \vec{d}\;\text{is a constant vector and C is a coefficient matrix} 
+\]
+\end{definition}
+%
+The abstraction and concretization functions $(\alpha_{SA}, \gamma_{SA})$ form 
+a galois connection.
+%
+\[
+  (\mathcal{SA}_{G},\subseteq_{SA})
+   \galois{\alpha_{SA}}{\gamma_{SA}}
+   (\widehat{\mathcal{SA}_{G}},\sqsubseteq_{SA})
+\]
+%
+\[
+  \alpha_{SA}(\numconcval) = \min \{\vec{\numabsval}\mid
+  \mat{C}\vec{\numvar}\leq\vec{\numabsval}, \vec{\numvar}\in
+  \numconcval\},\;\text{where}\; \min\; \text{is applied component-wise}.  
+\]  
+%  
+\[  
+   \gamma_{SA}(\vec{\numabsval}) \mathrel{\hat=} \{\vec{\numvar}\mid
+   \mat{C}\vec{\numvar}\leq\vec{\numabsval}, \vec{\numvar} \in X\} 
+   \qquad \gamma_{SA}(\bot)=\emptyset
+\]
+%
+
+
+
+%
+Figure~\ref{fig:abstract} shows the abstract static assignment lattice over an
+Interval abstract domain.  The elements marked in bold corresponds to concrete 
+assignments to SSA variables that maps to a concrete program trace. 
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.90}{\import{figures/}{abstract_env.pspdftex}}
+\caption{Abstract Static Assignment Lattice over a boolean SSA variable $p$ and two
+  numerical SSA variables $x$ and $y$ that takes values in Interval domain
+  \label{fig:abstract}}
+\end{figure}
+%
+\begin{example}
+For example, consider the SSA elements $\{x_1\geq 0, x_1-z\leq 30\}$, then
+abstract domain value is $\vec{\numabsval}=\vecv{0}{30}$,
+with $\mat{C}=\qmat{-1}{0}{1}{-1}$ and $\vec{\numvar}=\vecv{x_1}{z}$. \\ 
+\end{example}
+%
+\begin{definition} (Meet Irreducibles of $\widehat{\mathcal{SA}_G})$
+%
+
+A meet irreducible of \emph{abstract static assignment} domain
+$\widehat{\mathcal{SA}_{G}}$ where $\mat{C_i}$ is $i$-th row vector  
+of a matrix of size $N \times M$ and $\vec{\numabsval}$ is a vector 
+  of size $N$, is defined below.  \rmcmt{Here, $MAX$ is the largest 
+  value of $\vec{d}$ determined by the matrix $\mat{C}$}.
+%   
+\rmcmt{
+  \[
+     \meet_{irrd}(\widehat{\mathcal{SA}_{G}}) \mathrel{\hat=} 
+     \{\vec{d} \mid \exists_{=1}\;d_i \in \vec{\numabsval}.\;(d_i \neq MAX) \wedge
+     C_{i}\vec{x} \leq d_i\} \;\text{where}\;(i \leq N)
+  \]
+}  
+Informally, a meet irreducible of $\widehat{\mathcal{SA}_{G}}$ is the abstract
+value $\vec{d}$ such that there exists exactly one element of $\vec{d}$ that is
+not $MAX$.
+%
+\end{definition}
+%
+%\rmcmt{Show how MAX is computed}.
+We now discuss how $MAX$ is computed.  For as SSA element 
+$\hmat{1}{-1} \vecv{x}{y} \leq d$ where $x$ and $y$ are 
+32-bit signed integers (marked as s32 in figure~\ref{fig:max}), 
+the total number of bits to represent $d$ is 34.  Thus, the 
+value of $MAX$ is the largest value representable in 34 bits.
+%
+\begin{figure}[htbp]
+\centering
+\vspace*{-0.2cm}
+  \scalebox{.90}{\import{figures/}{max.pspdftex}}
+\caption{Computing $MAX$ from bit-width of $d$
+  \label{fig:max}}
+\end{figure}
+%
+
+
+Meet irreducibles of $\widehat{\mathcal{SA}_G}$ over an \emph{Interval} domain 
+with template $[l,u]$ such that $\vecv{-1}{1}(\vec{x})\leq \vecv{l}{u}$ is given
+by $\{\vecv{-l}{MAX}, \vecv{MAX}{u}\}$.
+%
+\begin{example}
+  An example of meet irreducible in $\widehat{\mathcal{SA}_{G}}$ over 
+  $\vec{\numvar} = \vecv{a}{b}$ that takes values in \emph{Interval} domain 
+  is given by, $\meet_{irrd}(\{a:[5,7]\}) = \{\vecv{-5}{MAX}, \vecv{7}{MAX}\}$ 
+  with $\mat{C}=\qmat{1}{0}{0}{0}$. Here, the abstract values of variable 
+  $b$ is equal to $MAX$. \\
+\end{example}  
+%
+\begin{example} \rmcmt{Octagon}
+  An example of meet irreducible in $\widehat{\mathcal{SA}_{G}}$ over 
+  $\vec{\numvar} = \vecv{a}{b}$ that takes values in \emph{Octagon} domain 
+  is given by, 
+  \[\meet_{irrd}(\{a+b \leq 5\}) =
+  \vecvvv{MAX}{MAX}{MAX}{MAX}{5}{MAX}{MAX}{MAX}\]
+    
+  \[\text{with}\;\; \mat{C}=
+  \begin{bmatrix}
+    0 & 1 \\
+    1 & 0 \\
+    0 & -1 \\
+    -1 & 0 \\
+    1 & 1 \\
+    1 & -1 \\
+    -1 & 1 \\
+    -1 & -1
+  \end{bmatrix}
+  \]
+  %\mat{c}=\qqqmat{0}{1}{1}{0}{0}{-1}{-1}{0}{1}{1}{1}{-1}{-1}{1}{-1}{-1}\] 
+   Here, the abstract values of $a$, $b$, $-a$, $-b$, $(a-b)$, $(-a+b)$, $(-a-b)$ are
+  equal to $MAX$. \\
+\end{example}  
+%
+
+
+An advantage of abstract static assignment domain $\widehat{\mathcal{SA}_{G}}$ 
+is that it can be instantiated over arbitrary relational or non-relational 
+numerical abstract domains.  This gives the flexibility to instantiate CDCL for 
+safety verification over arbitrary abstract domains. 
+%
+We will use the template-based abstraction for the rest of the paper. 
+%%%%%%%%%%%%%%%%%%%%%%%%% PROOF %%%%%%%%%%%%%%%%%%%%%%%%
+\begin{proposition}~\label{ag}
+  $
+  (\powerset({\Pi}),\subseteq)
+    \galois{\alpha_{T}}{\gamma_{T}}
+  (\mathcal{SA}_{G},\subseteq_{SA})
+   \galois{\alpha_{SA}}{\gamma_{SA}}
+   (\widehat{\mathcal{SA}_{G}},\sqsubseteq_{SA})
+  $ 
+\end{proposition}
+%
+\begin{proof}
+  The lattice $\mathcal{SA}_G$ is obtained from the concrete lattice of 
+  traces $\powerset(\Pi)$ via syntactic translation steps $\mathcal{T}_1$ and
+  $\mathcal{T}_2$, as shown in figure~\ref{fig:semantic}.  Both translation
+  steps are exact, that is, $\powerset(\Pi)$ and $\mathcal{SA}_G$ form an 
+  exact abstraction via the galois 
+  connection $(\alpha_T, \gamma_T)$. This implies, $\alpha_T(\pi) = \tau$ where
+  $\tau \in \mathcal{SA}_G$.  Also, $\gamma_T(\tau) = \pi \in \powerset(\Pi)$,
+  since an SSA can be exactly mapped back to the program trace following the
+  syntactic translation steps proposed in~\cite{Briggs:1998}.   
+  Thus, there is no loss or gain of information between elements of 
+  $\mathcal{SA}_{G}$ and $\powerset(\Pi)$.
+
+
+  Furthermore, the lattice $\widehat{\mathcal{SA}_{G}}$ is obtained via 
+  two-step galois connection $(\alpha_{T} \circ \alpha_{SA})$ from
+  the concrete lattice of traces $\powerset(\Pi)$. The abstraction $\alpha_{T}$
+  is exact, whereas, $\alpha_{SA}$ is an over-approxation by
+  definition~\ref{assl}.
+  By \rmcmt{transitivity, (find reference)}, the lattice 
+  $\widehat{\mathcal{SA}_{G}}$ over-approximates $\powerset(\Pi)$.
+\end{proof}
+%
+\Omit{
+\begin{definition}
+A trace $\pi$ in abstract static assignment domain $\widehat{\mathcal{SA}_{G}}$ 
+is a sequence of abstract states of the form $\{C_{ij}\vec{x} \leq \vec{d_{i}}$,
+starting with an abstract element $\top$. We use $\Pi$ to denote set of traces. 
+\end{definition}
+}
+%
+The abstract transformers for the lattice $\widehat{\mathcal{SA}_{G}}$ 
+transforms a memory state of a program and therefore associated with state 
+transformers.  For every SSA statement $s \in \constraints$, let
+$apost_{s}$ and $apre{s}$ be sound over-approximations of $post_{s}$ and
+$pre_{s}$ in the lattice $\widehat{\mathcal{SA}_G} \rightarrow 
+\widehat{\mathcal{SA}_G}$, respectively. 
+%
+Th global abstract static assignment transformers for the 
+lattice $\widehat{\mathcal{SA}_G}$ over a set of SSA constraints 
+$\constraints$ are obtained from abstract state transformers, 
+$apost_s, apre_s$. This is defined next.
+%
+\begin{definition} (Global Overapproximate Abstract Static Assignment Transformers). 
+  \[ 
+     apost_{\constraints}, apre_{\constraints} : \widehat{\mathcal{SA}_G}
+     \rightarrow \widehat{\mathcal{SA}_{G}} 
+   \]
+   \[
+     apost_{\constraints}(a) \mathrel{\hat=} 
+     \underset{\sigma \in \constraints}{\bigsqcap} apost_{\sigma} \circ a 
+   \]
+  \[
+     apre_{\constraints}(a) \mathrel{\hat=} 
+     \underset{\sigma \in \constraints}{\bigsqcap} apre_{\sigma} \circ a 
+   \]
+\end{definition}
+%
+The transformers $apost_{\constraints}$ and $apre_{\constraints}$ soundly overapproximates 
+$post_{\constraints}$ and $pre_{\constraints}$, respectively. 
+%
+\subsection{Complementation in Abstract Static Assignment Lattice}~\label{complement}
+%
+Recall that every meet irreducibles of a partial assignments domain admits a
+precise complement.  This property of the partial assignments domain enables a
+CDCL solver to learn a conflict clause that is obtained by complementing a 
+conflict reason.  In section~\ref{complement-fg}, we showed that the elements 
+of abstract flow lattice $\widehat{\mathcal{F}_G}$ does not always have precise 
+complements.  In this section, we show that the meet irreducibles of 
+$\widehat{\mathcal{SA}_G}$ have precise complements. 
+%
+\begin{definition}~\label{meet-decomp}
+A \emph{meet decomposition} $\decomp(\absval)$ of an abstract 
+element $\absval \in \widehat{\mathcal{SA}_{G}}$ is a set of meet 
+irreducibles $M \subseteq \widehat{\mathcal{SA}_{G}}$ such that 
+$\absval=\bigsqcap_{m\in M} m$.
+\end{definition}
+%
+\begin{example} The meet decomposition of the interval domain element
+$decomp(2\leq x\leq 4 \wedge 3\leq y\leq 5)$ is
+the set $\{x\geq 2, x\leq 4, y\geq 3, y\leq 5\}$.
+\end{example}
+%
+Recall that a precise complement of an element $a \in \widehat{\mathcal{SA}_G}$ 
+is an element $\bar{a} \in \widehat{\mathcal{SA}_G}$ such that $\neg \gamma_{SA}(\bar{a}) =
+\gamma_{SA}(a)$.  The meet irreducibles of Abstract Static Assignment lattice 
+$\widehat{\mathcal{SA}_G}$ admits precise complements. This is explained below. 
+%
+\[
+   \gamma_{SA}(\vec{\numabsval}) \mathrel{\hat=} \{\vec{\numvar}\mid
+   \mat{C}\vec{\numvar}\leq\vec{\numabsval}\} 
+\]
+\[
+   \gamma_{SA}(\bar{\vec{\numabsval}}) \mathrel{\hat=} \{\vec{\numvar}\mid
+   \mat{C}\vec{\numvar} > \vec{\numabsval}\} 
+\]
+\[
+   \neg \gamma_{SA}(\bar{\vec{\numabsval}}) \mathrel{\hat=} \{\vec{\numvar}\mid
+   \mat{C}\vec{\numvar} \leq \vec{\numabsval}\} 
+\]
+%
+\begin{example}
+Let an abstract SSA environment be $a = \{p:t,x\geq0,y\geq0\}$, 
+then $\bar{a} = \{p:f,x<0,y<0\}$ and $\neg \bar{a} = \{p:t,x\geq0,y\geq0\}$.
+\end{example}
+%
+\begin{example}
+The precise complement of a meet irreducible $(x \leq 2)$ in
+the interval domain over integers is $(x \geq 3)$, or the precise complement
+of the meet irreducible $(x+y \leq 1)$ in the octagon domain over integers
+is $(x+y \geq 2)$.  
+\end{example}
+%
+\begin{table}
+\scriptsize
+\begin{center}
+{
+\begin{tabular}{l|l|l|l|l}
+\hline
+  Domain & Concrete & Abstract & Meet & Complemented Meet \\ 
+  Name  & Domain & Elements & Irreducible & Irreducible \\ \hline
+Interval & $\powerset(Var \rightarrow \mathbb{Z}) \cup \bot$  & $x = [l,u]$ & $x\leq N$ & $x > N$ \\ \hline
+Octagon &  $\powerset(Var \times Var \rightarrow (\mathbb{Z} \cup
+\{\infty\})) \cup \bot$ & $(\pm x_i \pm x_j \leq d)$ & $(x+y \leq N)$ & $(-x-y < N)$ \\ \hline
+  Equality & $\powerset(Var \rightarrow \mathbb{Z}) \cup \bot$ & $(x=y)$ &
+  $(x=y)$ & $(x \neq y)$ \\ \hline 
+ Zones &  $\powerset(Var \times Var \rightarrow (\mathbb{Z} \cup
+\{\infty\})) \cup \bot$ & $(x_i - x_j \leq d)$ & $(x+y < N)$ & $(-x-y \leq N)$ \\ \hline
+\end{tabular}
+}
+\end{center}
+\label{fig:complement}
+\end{table}
+%
+Table~\ref{fig:complement} shows that most abstract domains admit precise
+complements.  We now show that the meet irreducibles of 
+$\widehat{\mathcal{SA}_{G}}$ have precise complements when instantiated over
+arbitrary abstract domains. 
+%
+\begin{proposition} 
+  $\gamma_{SA}(C_{i}\vec{x} \leq \vec{d_{i}}) = 
+  (\neg \gamma_{SA}(C_{i}\vec{x} > \vec{d_{i}}))$
+\end{proposition}
+%
+\begin{proof}
+  Assuming that $\vec{d}$ is chosen from a non-relational domain such as 
+  Interval domain $Itvs$, the meet 
+  irreducibles are of the form $\{\vec{x} \diamond \vec{d}\}$, where
+  $\diamond =
+  \{<,>,\leq,\geq\}$. It is easy to see that the meet irreducibles of $Itvs$ are easily
+  complementable.  Similarly, assuming that $\vec{d}$ is chosen from a
+  relational domain such as Octagon 
+  domain $Octs$, the meet irreducibles are of the form $\{\mat{C}\vec{x}
+  \diamond \vec{d}\}$, which also admits precise complements.  However, for
+  element $a \in \widehat{\mathcal{SA}_{G}}$, that does not admit precise 
+  complementation, it can be decomposed into half spaces, 
+  $decomp(a)=\{m_1, m_2, \ldots m_k\}$, such that each $m_i$ admits precise
+  complements. 
+\end{proof}
+%
+\Omit{
+\para{Elements in $\mathcal{SA}_G$ gives a Program Trace}
+%
+We use the result of~\cite{Briggs:1998} in Lemma~\ref{ssa-model} that shows 
+a model of $\varphi$ corresponds to a concrete counterexample trace in the 
+original program. 
+%
+\begin{lemma}
+  \[ \mathcal{T}_2(\gamma(a)) = \{\pi \mid \pi \in \Pi \wedge a \in
+  \widehat{\mathcal{SA}_G} \} \]
+\end{lemma}
+%
+\begin{proof}
+
+\end{proof}
+}
+%

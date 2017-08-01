@@ -1,0 +1,87 @@
+\section{Soundness and Termination of ACDLP}
+%
+We now present the \emph{soundness} and \emph{termination} proof of the ACDLP algorithm.  
+
+%\para{Soundness of ACDLP}
+%\rmcmt{Leo ACDL paper Theorem 11}
+
+\begin{theorem} (Soundness).  If ACDLP returns \emph{safe}, then $f_{unsafe}^G$ 
+deduces $\emptyset$, that is, there exists no trace that terminate in error 
+location $\err$.  If ACDLP returns \emph{unsafe}, then $f_{unsafe}^G$ is not 
+empty, that is, there exists at least one trace that terminate in $\err$.
+\end{theorem}
+
+\begin{proof}
+
+\end{proof}
+
+
+\para{Correctness of ACDLP}
+Recall that a program $P$ is translated into a set of constraints, $\constraints$ 
+and represented as a safety formula, $\formula$.  The formula $\formula$ is a 
+conjunction of SSA constraints $\constraint \in \constraints$ which are derived 
+from $P$ through syntactic translation steps. 
+
+
+Partial correctness of ACDLP is trivial since the algorithm either terminates with 
+a model of $\formula$ ($P$ is \emph{unsafe}) or deduce $\bot$ ($P$ is safe).  It 
+only remains to guarantee termination of ACDLP.  The termination is guaranteed 
+by three key conditions -- \emph{Progress}, \emph{Finite Closure}, and \emph{Absence 
+of deadlock}.  The following theorem shows that given these three conditions, ACDLP 
+always terminates.
+%
+\begin{theorem} (Termination).
+Given a set of constraints $\constraints$, and a finite set of meet irreducibles 
+in abstract domain $\domain$ from which all the clauses during the run of the ACDLP 
+procedure can be constructed, any derivation starting from an initial abstract 
+element $\top$ will terminate either with \emph{safe}, when the set of constraints 
+$\constraints$ is satisfiable, or with \emph{unsafe}, when the set of constraints 
+$\constraints$ is unsatisfiable. 
+\end{theorem}
+%
+\begin{proof}
+The progress condition guarantees that model search phase eventually terminates, that 
+is, there is \emph{no} infinite sequence of decisions ($f_{dec}$) and deductions, 
+($apost_s$).  Starting from $\top$, the model search deduce sequence of abstract values 
+which follow some partial order such that $a \sqsupseteq a'$, where $a'$ is closer to the 
+solution in some heuristic sense.  The deduction sequence terminates either in $\bot$ 
+(conflict) or some abstract value $a^\dagger$ such that the set of constraints 
+$\constraints$ is $\gamma$-complete in $a^\dagger$.  
+
+
+The progress of model search is explained by defining a partial order on trails, similar to 
+~\cite{mcsat1}. The trail $\trail$ in ACDLP contains two different kinds of elements -- 
+decision $(q)$ and propagations $(p)$.  We define a $cost$ function that maps elements of 
+the trail into the set $\{1,2\}$, such that $cost(q)=1$ and $cost(p)=2$.  The intuition 
+here is that the cost of propagations are higher than the cost of decisions.  We define 
+$\trail\prec \trail'$ based on lexicographic ordering on the cost of the trail 
+elements, which is shown below.
+\[
+   a.\trail \prec b.\trail' = cost(a) < cost(b) \vee (cost(a) = cost(b) \wedge \trail \prec \trail')
+\]
+
+Clearly, an empty trail is the minimal element, that is, $\langle \rangle \prec \trail$ if 
+$\trail \neq \langle \rangle$.  Adding a new element $(a)$ to the trail $\trail$ 
+increases its cost or makes it \emph{bigger} with respect to the partial order $\prec$, that is, 
+$\trail \prec \trail.a$.  This condition holds true for decision and propagation steps.   
+When the procedure backjumps, then the configuration of trail changes from $\trail.q.Z$ to $\trail.p$.  
+In this case, $cost(q) \prec cost(p)$ and hence the trail is bigger with respect to $\prec$ 
+after backjumping.  Thus, each step of ACDLP produce a bigger trail with respect to the partial 
+order and ensures progress. However, the trail does not increase forever and thus guarantees 
+termination.  
+
+
+A deadlock freedom property guarantees that a new learnt clause can be added to the 
+initial set of constraints $\constraints$ when a conflict takes place.  Let us 
+assume that there is a derivation that does not terminate, that is, we must execute 
+learning infinitely often.  However, this is a contradiction since each learning step 
+must add a new clause to $\constraints$ which blocks the model search from re-entering 
+the conflicting search space again and $\constraints$ is contained in the finite 
+closure of the initial set of constraints $\constraints$. 
+
+
+%The conflict analysis procedure always terminates in a finite number of steps through
+%repeated application of the transformer $\widehat{a_{pre}}$. During the process, it 
+%learns a new clause, backtracks and removes previously deduced elements. 
+
+\end{proof}

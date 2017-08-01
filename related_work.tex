@@ -1,0 +1,29 @@
+%===============================================================================
+\section{Related Work}
+%===============================================================================
+%
+\rmcmt{Refer ATVA paper}
+The abstract satisfaction framework in~\cite{leo-thesis} can be perceived from
+three different perspectives -- 1) characterizing satisfiability procedure as 
+abstract interpretation, 2) using decision procedures to refine static analysis, 
+and 3) lifting solver and deduction algorithms to new logics.   
+
+Imprecision in static analysis may be due to joins, or over-approximate abstract
+transformers or imprecise fixed point iteration. Precision loss due to joins was 
+addressed through application of CDCL-style reasoning~\cite{tacas12}, 
+DPLL(T)~\cite{SMPP}, or through unification~\cite{cade07}.  The works of   
+of~\cite{vmcai04} and~\cite{cav12} synthesize best abstract transformer using
+satisfiability solvers. Whereas, the precision loss due to fixed point iteration
+is addressed by Monniaux et. al. in~\cite{sas11}.
+
+The DPLL(T) framework provides an unified approach to developing decision 
+procedures~\cite{dpllt}.  However, the seperation between the Boolean and 
+theory solver in DPLL(T) can lead to performance issues.  Hence, several 
+framework evolved based on DPLL(T) in the past.  Some of the attempts in 
+this direction are Abstract DPLL framework~\cite{adpll}, generalized 
+DPLL~\cite{dpll}, natural domain SMT~\cite{ndsmt}.
+
+The work of~\cite{DBLP:journals/fmsd/BrainDGHK14} lifted CDCL to floating-point 
+arithmetic, whereas Nelson-Oppen combination procedure was lifted to abstract
+domains~\cite{cav12} and ~\cite{pldi06} lifted St$\mathring{\text{a}}$lmarck's 
+method to arithmetic logic. 

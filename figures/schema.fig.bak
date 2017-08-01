@@ -1,0 +1,26 @@
+#FIG 3.2  Produced by xfig version 3.2.6
+Landscape
+Center
+Metric
+A4
+100.00
+Single
+-2
+1200 2
+2 4 0 1 0 7 50 -1 -1 0.000 0 0 7 0 0 5
+	 3690 4590 3690 3105 990 3105 990 4590 3690 4590
+2 4 0 1 0 7 50 -1 -1 0.000 0 0 7 0 0 5
+	 9450 4590 9450 3105 4590 3105 4590 4590 9450 4590
+2 1 0 1 0 7 50 -1 -1 0.000 0 0 -1 1 0 2
+	1 1 1.00 60.00 120.00
+	 3690 3960 4590 3960
+4 0 0 50 -1 0 12 0.0000 6 195 4755 1080 3600 $apre_s\\; apost_s\\; \\widehat{apre_s}\\; \\widehat{apost_s}$\001
+4 0 0 50 -1 0 12 0.0000 6 195 6180 1080 3330 $\\widehat{\\mathcal{SA}_{G}}\\; \\sqsubseteq\\; \\sqcap \\;\\sqcup\\; \\top\\; \\bot$ \001
+4 0 0 50 -1 0 12 0.0000 4 180 4380 4635 3915 Approximation of Safe and Unsafe Trace Transformers\001
+4 0 0 50 -1 0 12 0.0000 4 180 3015 4635 3330 Lattice of Abstract Static Assignment\001
+4 0 0 50 -1 0 12 0.0000 6 195 8565 1080 3915 $f_{asafe}^{\\rightarrow}\\; f_{asafe}^{\\leftarrow}\\; f_{aunsafe}^{\\leftarrow}\\; f_{aunsafe}^{\\rightarrow}$\001
+4 0 0 50 -1 0 12 0.0000 6 180 840 1080 4230 $f_{dec}$\001
+4 0 0 50 -1 0 12 0.0000 4 135 4635 4635 4500 Choice of Conflict Reason and Learned Unit Transformer\001
+4 0 0 50 -1 0 12 0.0000 4 180 1470 4635 4230 Decision Operator\001
+4 0 0 50 -1 0 12 0.0000 6 195 2430 1080 4500 $int\\upharpoonright\\; AUnit$\001
+4 0 0 50 -1 0 12 0.0000 4 135 1545 4635 3600 State Transformers \001

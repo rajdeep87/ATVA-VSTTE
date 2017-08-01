@@ -1,0 +1,29 @@
+\section{Completeness of ACDLP}
+%
+Leopold thesis, Page 113, 
+"The completeness argument relies on the so-called "asserting" property of
+learned clause ... "
+
+\section{Termination of ACDLP}
+%
+Follow from paper mcSAT (Similar argument)
+(A Model-Constructing Satisfiability Calculus 
+http://csl.sri.com/users/dejan/papers/mcsat-vmcai2013.pdf)
+
+Termination discussion with Leopold
+===================================
+Termination —
+acyclicity ,
+progress in finite case — finite lattice explore the whole lattice
+gamma-complete counterexample —
+Leopold POPL paper terminatation argument follow for finite lattice — progress finitely many steps — there is infinite sequence — guarantee of widening is finite — cannot go infinitely for in the lattice — width of the lattice — buckjump in the lattice can not reach same search same infinitely
+When I step down in lattice, given a decision operator that does not infinitely make decisions — infinite intervals — smart decision operator makes finite range over intervals, either leads to conflict or gamma-complete in finite number of steps
+
+    no infinite sequence of decisions
+    no infinitely buckjump
+    d when decide, b when backtrack — there is no sequence of algorithm that generate infinite sequence of b and d alternate — as long as we don’t reach some same space in lattice, hence not cyclic
+    either an interval is unsat, or there is one value wherein is satisfiable
+    — bounded from above intervals
+
+case 2: For infinite lattice
+— SSA variables are finite, SSA values are finite
