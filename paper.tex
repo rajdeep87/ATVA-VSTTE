@@ -71,31 +71,29 @@ Daniel Kroening \and Tom Melham}
 \begin{abstract}
 %===============================================================================
 %
-  This paper shows that Conflict Driven Clause Learning (CDCL) algorithm
-  employed in modern day satisfiability solvers can be used to compute 
-  fixed point approximations over lattice of program traces to determine 
-  safety.  Satisfiability or model finding can be seen as a property of fixed 
-  points of unsafe trace transformers over this lattice.  CDCL algorithm 
-  alternates between an overapproximate model search phase and an 
-  underapproximate conflict analysis phase.  We show that 
-  the model search computes a greatest fixed point over unsafe trace transformer
-  using deductions and decisions.  Whereas, conflict analysis computes a 
-  least fixed point of safe trace transformer over a downset lattice with 
-  a heuristic choice of conflict reasons.  Thus, CDCL architecture can be seen 
-  as a natural tool to build a precise program analyzer that uses decision and 
-  learning to automatically refine the precision of an analysis. This paper
-  present a sound mathematical framework for building a precise abstract 
-  interpretation based program analyzer using CDCL architecture as well as a practical tool 
-  that implements these ideas for automatic bounded safety verification of C programs. 
-  We call our technique \emph{Abstract Conflict Driven Learning for Programs} (ACDLP).
-  We~evaluate the performance of our analyser by comparing with CBMC, which
-  uses Boolean CDCL, and Astr{\'e}e, a commercial abstract interpretation tool. 
-  We~observe two orders of magnitude reduction in the number of decisions,
-  propagations, and conflicts as well as a~1.5x speedup in runtime compared to
-  CBMC.  Compared to Astr{\'e}e, ACDLP solves twice as many benchmarks and has
-  much higher precision.  
-  %Our work is the first step towards lifting CDCL algorithm for design and 
-  %implementation of a precise static analyzers.
+This paper shows that the Conflict Driven Clause Learning (CDCL) algorithm
+employed in modern satisfiability solvers can be used to compute fixed point
+approximations over a lattice of program traces to determine safety. 
+Satisfiability or model finding can be seen as a property of fixed points of
+unsafe trace transformers over this lattice.  The CDCL algorithm alternates
+between an overapproximate model search phase and an underapproximate
+conflict analysis phase.  We show that the model search computes a greatest
+fixed point over unsafe trace transformers using deductions and decisions. 
+By contrast, conflict analysis computes a least fixed point of safe trace
+transformers over a downset lattice with a heuristic choice of conflict
+reasons.  Thus, the CDCL architecture is shown to be a means to build a
+program analyzer that uses decisions and learning to automatically refine
+the precision of an analysis.  This paper presents a sound mathematical
+framework for building a precise abstract interpretater using the CDCL
+architecture as well as a practical tool that implements these ideas for
+automatic bounded safety verification of C programs.  We call our technique
+\emph{Abstract Conflict Driven Learning for Programs} (ACDLP).  We~evaluate
+the performance of our analyser by comparing with CBMC, which uses Boolean
+CDCL, and Astr{\'e}e, a commercial abstract interpretation tool.  We~observe
+two orders of magnitude reduction in the number of decisions, propagations,
+and conflicts as well as a~1.5x speedup in runtime compared to CBMC. 
+Compared to Astr{\'e}e, ACDLP solves twice as many benchmarks and has much
+higher precision.
 %
 \end{abstract}
 
