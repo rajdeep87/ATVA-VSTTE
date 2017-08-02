@@ -406,8 +406,8 @@ gives an exact SSA semantics of a program.
 \para{SSA Safety}
 %
 The translation from CFG to SSA is represented by a set 
-$\constraints=\program\cup\{\neg \bigwedge_{\assertion\in\assertions} \assertion\}$,
-where $\program$ contains an encoding of the statements in the program as
+$\constraints=\Prog\cup\{\neg \bigwedge_{\assertion\in\assertions} \assertion\}$,
+where $\Prog$ contains an encoding of the statements in the program as
 constraints, obtained after translating the program into single static 
 assignment (SSA) form~\cite{ssa88,ssa1988,ssa1991}. 
 %
