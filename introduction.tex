@@ -1,28 +1,27 @@
 \section{Introduction}
 
-\para{Conflict Driven Clause Learning Solvers} 
-%
-A Conflict Driven Clause Learning algorithm~\cite{cdcl} is a boolean satisfiability
-procedure that alternates between a model search phase and conflict analysis
-phase to solve a propositional formula given in conjunctive normal form (CNF).  
-The model search phase uses \emph{decisions} and \emph{Boolean Constraint
-Propagation} (BCP) to search for a satisfying assignment of the formula.  A 
-decision uses branching to assign the chosen value to a chosen branching variable.  
-Decision is followed by BCP step. BCP uses repeated application of unit rule where 
-an unit rule identifies variables which must be assigned specific Boolean value. 
-If BCP identifies an unsatisfied clause, the CDCL algorithm is said to be in 
-\emph{conflict} and the algorithm \emph{backtracks} non-chronologically. A
-backjumping procedure undoes all branching steps until the decision level 
-where the solver state is consistent (non-conflicting).  This is a key 
-difference with a DPLL solver which just backtracks to the previous 
-decison level and flips it. The backjumping level in CDCL is determined 
-by analyzing the most recent conflict and learning a new clause from the 
-conflict.  If the backtracking level is the root of the search tree, then 
-the solver terminates with no models, that is, the formula is \emph{unsatisfiable}.  
-Else, the model search phase is repeated with the learnt clause and the procedure 
-continues until all variables has been assigned in which case, the 
-algorithm returns a satisfiable assignment, that is, the formula is \emph{satisfiable}. 
-%
+\emph{Conflict Driven Clause Learning} (CDCL) is a technique for determining
+the satisfiability of Boolean formulas given in conjunctive normal form
+(CNF)~\cite{cdcl}.  CDCL alternates between a model search phase and a
+conflict analysis phase.  The model search phase uses \emph{decisions} and
+\emph{Boolean Constraint Propagation} (BCP) to search for an assignment that
+satisfies the formula.  A decision uses branching to assign a chosen value
+to a chosen variable.  The decision is followed by BCP.  BCP is the repeated
+application of the unit rule, where the unit rule identifies variables that
+must be assigned a specific Boolean value.  If BCP identifies an unsatisfied
+clause, the CDCL algorithm is said to be in \emph{conflict} and the
+algorithm \emph{backtracks} non-chronologically.  A~backjumping procedure
+undoes all branching steps until the decision level where the solver state
+is consistent (non-conflicting).  This is a key improvement over the
+original Davis--Putnam--Logemann--Loveland (DPLL) algorithm, which
+backtracks to the previous decison level and then flips~it.  By contrast,
+the backjumping level in CDCL is determined by analyzing the most recent
+conflict and learning a new clause from the conflict.  If the backtracking
+level is the root of the search tree, then the solver terminates with no
+models, that is, the formula is unsatisfiable.  Otherwise, the model search
+phase is repeated with the learnt clause and the procedure continues until
+all variables has been assigned and the algorithm returns a satisfying
+assignment, that is, the formula is satisfiable.
 
 \para{Connection between CDCL and Program Analysis}
 %
