@@ -76,7 +76,7 @@
 
 %%% Program model
 
-\newcommand{\Prog}{\mathit{Prog}}
+\newcommand{\program}{\mathit{Prog}}
 \newcommand{\assertions}{\mathit{Assn}}
 \newcommand{\assertion}{\mathit{a}}
 \newcommand{\constraints}{\Sigma^\dagger}
@@ -98,6 +98,8 @@
 \newcommand{\conflictset}{\mathit{C}}
 \newcommand{\exclude}{\mathit{exclude}}
 
+
+\newcommand{\conf}[2]{\mathit{conf}_{#1}^{#2}}
 \newcommand{\modformula}[2]{\llbracket #1 \rrbracket_{#2}}
 \newcommand{\abstrans}[2]{\llbracket #2 \rrbracket_{#1}}
 \newcommand{\abdgen}[3]{abdgen_{#1,#2}^{#3}}
@@ -224,6 +226,7 @@
 \newcommand{\pbacktrack}{\mathsf{backtrack}}
 \newcommand{\pfail}{\mathsf{fail}}
 \newcommand{\psafe}{\mathsf{safe}}
+\newcommand{\ltrans}{$f_{aunsafe}^{G \dagger}$}
 
  \newcommand{\fpfont}[1]{\textbf{\sffamily{#1}}}
  \newcommand{\fpfn}[1]{\sffamily{#1}}
