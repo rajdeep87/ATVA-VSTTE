@@ -45,18 +45,18 @@ Single
 	 4950 5220 4950 4635 2430 4635 2430 5220 4950 5220
 2 4 0 1 0 7 50 -1 -1 0.000 0 0 7 0 0 5
 	 4185 6390 4185 5985 3240 5985 3240 6390 4185 6390
-4 0 0 50 -1 2 12 0.0000 4 135 675 5265 5445 Conflict\001
-4 0 0 50 -1 2 12 0.0000 4 135 1110 5085 3015 Transformer\001
-4 0 0 50 -1 2 12 0.0000 4 165 795 5220 3240 Learning\001
-4 0 0 50 -1 2 12 0.0000 4 135 1170 3150 2880 Model Search\001
-4 0 0 50 -1 2 12 0.0000 4 180 1440 7515 2880 Conflict Analysis\001
-4 0 0 50 -1 0 12 0.0000 6 195 1530 7650 3690 $lfp(f_{asafe}^G)$\001
-4 0 0 50 -1 0 12 0.0000 6 195 1785 3195 3690 $gfp(f_{aunsafe}^G)$\001
-4 0 0 50 -1 0 12 0.0000 4 135 1830 8325 5805 No Backtrack Possible\001
-4 0 0 50 -1 0 12 0.0000 6 195 9780 2520 5085 $f_{dec} \\colon \\widehat{\\mathcal{SA}_G} \\times \\widehat{\\mathcal{SA}_G} \\rightarrow \\widehat{\\mathcal{SA}_G}$\001
-4 0 0 50 -1 0 12 0.0000 4 180 1470 2835 4860 Decision Operator\001
-4 0 0 50 -1 0 12 0.0000 4 180 1740 7290 4860 Upward Interpolation\001
-4 0 0 50 -1 0 12 0.0000 6 195 12405 6390 5085 $int\\upharpoonright \\colon \\mathcal{D}(\\widehat{\\mathcal{SA}_G}) \\times \\mathcal{D}(PAsgn) \\rightarrow \\mathcal{D}(\\widehat{\\mathcal{SA}_G})$\001
-4 0 0 50 -1 0 12 0.0000 6 195 1665 2565 5805 $\\gamma$-complete\001
-4 0 0 50 -1 0 12 0.0000 4 135 735 3375 6255 UNSAFE\001
-4 0 0 50 -1 0 12 0.0000 4 135 465 7965 6255 SAFE\001
+4 0 0 50 -1 0 12 0.0000 6 210 1680 7650 3690 $lfp(f_{asafe}^G)$\001
+4 0 0 50 -1 0 12 0.0000 6 210 1950 3195 3690 $gfp(f_{aunsafe}^G)$\001
+4 0 0 50 -1 0 12 0.0000 4 150 1965 8325 5805 No Backtrack Possible\001
+4 0 0 50 -1 0 12 0.0000 6 210 10620 2520 5085 $f_{dec} \\colon \\widehat{\\mathcal{SA}_G} \\times \\widehat{\\mathcal{SA}_G} \\rightarrow \\widehat{\\mathcal{SA}_G}$\001
+4 0 0 50 -1 0 12 0.0000 4 195 1575 2835 4860 Decision Operator\001
+4 0 0 50 -1 0 12 0.0000 4 195 1845 7290 4860 Upward Interpolation\001
+4 0 0 50 -1 0 12 0.0000 6 210 13395 6390 5085 $int\\upharpoonright \\colon \\mathcal{D}(\\widehat{\\mathcal{SA}_G}) \\times \\mathcal{D}(PAsgn) \\rightarrow \\mathcal{D}(\\widehat{\\mathcal{SA}_G})$\001
+4 0 0 50 -1 0 12 0.0000 6 210 1770 2565 5805 $\\gamma$-complete\001
+4 0 0 50 -1 0 12 0.0000 4 150 855 3375 6255 UNSAFE\001
+4 0 0 50 -1 0 12 0.0000 4 150 540 7965 6255 SAFE\001
+4 0 0 50 -1 2 10 0.0000 4 105 840 5175 3105 Transformer\001
+4 0 0 50 -1 2 10 0.0000 4 150 615 5310 3240 Learning\001
+4 0 0 50 -1 2 12 0.0000 4 195 3015 2070 2925 Abstract-Counterexample-Search\001
+4 0 0 50 -1 2 10 0.0000 4 105 555 5355 5400 Conflict\001
+4 0 0 50 -1 2 12 0.0000 4 195 2610 6840 2925 Analyze-Partial-Safety-Proof\001
