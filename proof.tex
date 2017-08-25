@@ -1,28 +1,65 @@
 \section{Soundness and Termination of ACDLP}
 %
-We now present the \emph{soundness} and \emph{termination} proof of the ACDLP algorithm.  
+We now present the \emph{soundness} and \emph{termination} proof of the 
+ACDLP algorithm.  Recall that given a program $P$ with bounded loops and 
+finite recursion depth, a loop-free unrolled program is obtained through 
+complete unrollings of all loops, which is then translated into a set of 
+constraints, $\constraints$ and represented as a safety formula, $\formula$.  
+The formula $\formula$ is a conjunction of SSA constraints 
+$\constraint \in \constraints$ which are derived from $P$ through 
+syntactic translation steps.  Furthermore, we consider a 
+\rmcmt{finite height abstract domain} that represent the lattice of 
+abstract static assignments. 
 
-%\para{Soundness of ACDLP}
-%\rmcmt{Leo ACDL paper Theorem 11}
-
-\begin{theorem} (Soundness).  If ACDLP returns \emph{safe}, then $f_{unsafe}^G$ 
-deduces $\emptyset$, that is, there exists no trace that terminate in error 
-location $\err$.  If ACDLP returns \emph{unsafe}, then $f_{unsafe}^G$ is not 
-empty, that is, there exists at least one trace that terminate in $\err$.
+\para{Soundness of ACDLP}
+Soundness guarantees that if ACDLP returns \emph{safe}, then the program is 
+indeed safe.  However, if ACDLP returns \rmcmt{unsafe}, then the program is 
+unsafe.
+\begin{theorem} (Soundness).  
+If ACDLP returns $\bot$, then $f_{unsafe}^G$ is \emph{globally bottom}. 
+If ACDLP returns a counterexample, then $f_{unsafe}^G$ is \emph{not globally bottom}. 
 \end{theorem}
+%If ACDLP returns \emph{safe}, then $f_{unsafe}^G$ is \emph{globally bottom}. 
+%If ACDLP returns \emph{unsafe}, then $f_{unsafe}^G$ is \emph{not globally bottom}. \end{theorem}
+
 
 \begin{proof}
 
+Assume ACDLP returns $\bot$.  Then, \texttt{analyze-partial-safety-proof} 
+procedure returns $\top$. We show that $f_{unsafe}^G$ is \emph{globally bottom}. 
+From lemma~\ref{sound-transformer}, $f_{aunsafe}^G$ is a sound overapproximation 
+of $f_{unsafe}^G$ at every iteration of ACDLP algorithm, that is, when 
+\texttt{abstract-counterexample-search} returns $(\bot, a)$, then 
+$f_{safe}^G(\gamma_{SA}(a)) = \bot$. Given $a$, a conflict reason $r$ is 
+computed such that $r = \alpha_{D} \circ \gamma_{SA}(a)$.   The 
+relation between $a$ and $r$ can be established by duality as 
+$f_{safe}^G(\bot) \supseteq \gamma_{SA}(a) \supseteq \gamma_{D}(r)$. 
+The \texttt{analyze-partial-safety-proof} procedure takes $r$ as input and 
+returns $r'$ such that $r' \sqsupseteq_{SA}^\dagger r$ and $\gamma_{D}(r') = \top$.  
+When $\gamma_{D}(r') = \top$ holds, then the soundness of abstract interpretation 
+guarantees that $f_{safe}^G(\gamma_D(r)) = \top$.  
+
+From $f_{safe}^G(\gamma_D(r)) = \top$ and 
+$f_{safe}^G(\bot) \sqsupseteq \gamma_{SA}(a) \sqsupseteq \gamma_{D}(r)$, 
+we can conclude that $f_{safe}(\bot) = \top$. Thus, dually it can be shown 
+that $f_{unsafe}(\top) = \bot$. Hence, when ACDLP returns $\bot$, 
+$f_{unsafe}^G$ is \emph{globally bottom}. 
+
+
+Assume ACDLP returns a counterexample $\mathcal{C}$.  Then, 
+the model search procedure \texttt{abstract-counterexample-search} returns 
+(non-$\bot, \mathcal{C})$.  This implies that $f_{aunsafe}^G$ 
+is $\gamma$-complete at $\mathcal{C} \in \widehat{\mathcal{SA}_G}$,
+that is, $\gamma_{SA}(\mathcal{C}) \neq \bot$ and 
+$f_{aunsafe}^G(\mathcal{C}) = \mathcal{C}$.  Since, 
+$f_{aunsafe}^G$ is $\gamma$-complete at $\mathcal{C}$, 
+so by definition of $\gamma$-completeness, $f_{unsafe}^G$ 
+is not globally bottom. 
+%Thus, $f_{unsafe}^G$ is non-$\bot$ at $d$ where \rmcmt{$d = \gamma_T(\gamma_{SA}(\mathcal{C}))$.} 
 \end{proof}
 
 
 \para{Correctness of ACDLP}
-Recall that a program $P$ is translated into a set of constraints, $\constraints$ 
-and represented as a safety formula, $\formula$.  The formula $\formula$ is a 
-conjunction of SSA constraints $\constraint \in \constraints$ which are derived 
-from $P$ through syntactic translation steps. 
-
-
 Partial correctness of ACDLP is trivial since the algorithm either terminates with 
 a model of $\formula$ ($P$ is \emph{unsafe}) or deduce $\bot$ ($P$ is safe).  It 
 only remains to guarantee termination of ACDLP.  The termination is guaranteed 
@@ -30,26 +67,44 @@ by three key conditions -- \emph{Progress}, \emph{Finite Closure}, and \emph{Abs
 of deadlock}.  The following theorem shows that given these three conditions, ACDLP 
 always terminates.
 %
+
 \begin{theorem} (Termination).
-Given a set of constraints $\constraints$, and a finite set of meet irreducibles 
-in abstract domain $\domain$ from which all the clauses during the run of the ACDLP 
-procedure can be constructed, any derivation starting from an initial abstract 
-element $\top$ will terminate either with \emph{safe}, when the set of constraints 
-$\constraints$ is satisfiable, or with \emph{unsafe}, when the set of constraints 
-$\constraints$ is unsatisfiable. 
+%Given a set of constraints $\constraints$, and a finite set of meet irreducibles 
+%in a finite abstract domain $\domain$ from which all the clauses during the run of the ACDLP 
+%procedure can be constructed, any derivation starting from an initial abstract 
+%element $\top$ will terminate either with \emph{safe} or \emph{unsafe}.
+Given a finite abstract domain $\domain$, any derivation of ACDLP starting from an 
+initial abstract element $\top$ will terminate either with $\bot$ or non-$\bot$.
 \end{theorem}
 %
-\begin{proof}
-The progress condition guarantees that model search phase eventually terminates, that 
-is, there is \emph{no} infinite sequence of decisions ($f_{dec}$) and deductions, 
-($apost_s$).  Starting from $\top$, the model search deduce sequence of abstract values 
-which follow some partial order such that $a \sqsupseteq a'$, where $a'$ is closer to the 
-solution in some heuristic sense.  The deduction sequence terminates either in $\bot$ 
-(conflict) or some abstract value $a^\dagger$ such that the set of constraints 
-$\constraints$ is $\gamma$-complete in $a^\dagger$.  
+\begin{proof}	
+
+The number of clauses over a finite domain $\domain$ containing finite number of 
+meet irreducibles is finite.   
+A deadlock freedom property guarantees that new learned clauses can be generated 
+whenever a conflict takes place.  Let us 
+assume that there is a derivation that does not terminate, that is, we must execute 
+learning infinitely often.  However, this is a contradiction due to the following 
+properties of \texttt{learn} transformer and the underlying domain $\domain$. 
+%
+\begin{enumerate}
+\item	Learning adds a new clause that is obtained through \emph{asserting backjumps}.  
+	An asserting backjump property guarantees that same clause is never learned twice. 
+
+\item  The set of learned clauses is contained in the \emph{finite closure} of the set of 
+       transformers in $\Sigma^\dagger$. 
+\end{enumerate} 
+%
+\rmcmt{The above conditions guarantees that \texttt{analyze-partial-safety-proof} 
+always terminates over a finite lattice.}
 
 
-The progress of model search is explained by defining a partial order on trails, similar to 
+Similar to CDCL solver, progress condition in ACDLP is that the learning causes 
+\texttt{abstract-counterexample-search} to deduce new information by navigating 
+the search away from the conflicting element. Following lemma~\ref{bjump}, if 
+backjumps in ACDLP are asserting, then ACDLP makes progress. 
+
+The progress condition is explained by defining a partial order on trails, similar to 
 ~\cite{mcsat1}. The trail $\trail$ in ACDLP contains two different kinds of elements -- 
 decision $(q)$ and propagations $(p)$.  We define a $cost$ function that maps elements of 
 the trail into the set $\{1,2\}$, such that $cost(q)=1$ and $cost(p)=2$.  The intuition 
@@ -67,17 +122,27 @@ $\trail \prec \trail.a$.  This condition holds true for decision and propagation
 When the procedure backjumps, then the configuration of trail changes from $\trail.q.Z$ to $\trail.p$.  
 In this case, $cost(q) \prec cost(p)$ and hence the trail is bigger with respect to $\prec$ 
 after backjumping.  Thus, each step of ACDLP produce a bigger trail with respect to the partial 
-order and ensures progress. However, the trail does not increase forever and thus guarantees 
-termination.  
+order and hence ensures progress. However, the trail does not increase forever and thus guarantees 
+the termination of \texttt{abstract-counterexample-search} procedure over a finite lattice.
 
 
-A deadlock freedom property guarantees that a new learnt clause can be added to the 
-initial set of constraints $\constraints$ when a conflict takes place.  Let us 
-assume that there is a derivation that does not terminate, that is, we must execute 
-learning infinitely often.  However, this is a contradiction since each learning step 
-must add a new clause to $\constraints$ which blocks the model search from re-entering 
-the conflicting search space again and $\constraints$ is contained in the finite 
-closure of the initial set of constraints $\constraints$. 
+Thus, the progress condition guarantees that \texttt{abstract-counterexample-search} 
+terminates, that is, there is \emph{no} infinite sequence of decisions 
+($f_{dec}$) and deductions, ($f_{aunsafe}^G$).  Starting from $\top$, 
+$f_{aunsafe}^G$ deduces sequence of abstract values 
+in the lattice of abstract static assignment $\widehat{\mathcal{SA}_G}$, which follow a 
+downward iteration sequence.
+%such that $a \sqsupseteq a'$, where $a'$ is closer to the solution in some heuristic sense.  
+The deduction sequence terminates either in $\bot$ 
+(conflict) or some abstract value $a^\dagger \in \widehat{\mathcal{SA}_G}$ such that 
+the set of constraints $\constraints$ is $\gamma$-complete in $a^\dagger$.  
+In the former case, ACDLP enters into conflict analysis phase where 
+it analyses the partial safety proof.  However, in the later case, ACDLP 
+terminates with \emph{unsafe} and returns an abstract element $a^\dagger$ where 
+$\gamma_{SA}(a^{\dagger}) \neq \bot$.  
+
+%ACDLP eventually 
+%terminates with \emph{safe} because of the \rmcmt{deadlock freedom property.}
 
 
 %The conflict analysis procedure always terminates in a finite number of steps through
